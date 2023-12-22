@@ -1,0 +1,62 @@
+@startuml
+
+skinparam class {
+  BackgroundColor Snow
+}
+MyApplication --|> javafx.application.Application
+MyApplication --|> AllControllers
+AllControllers *--* FXMLLoader : uses
+AllControllers --* ClientEnd : calls
+LoginController --> PasswordHasher : calls
+NewAccountController --> PasswordHasher : calls
+ClientEnd <--> Server : interact
+MyApplication --> Stage
+Stage --> Scene
+Scene --> FXMLLoader
+class MyApplication
+class AllControllers {
+  + interact(s: String): String
+}
+class ClientEnd {
+  + interact(s: String): String
+}
+class PasswordHasher {
+  + hashPassword(password: String): int
+}
+class Stage
+class Scene
+class FXMLLoader
+class LoginController extends AllControllers {
+  + handleLoginButton()
+  + handleCreateAccountButton()
+}
+class NewAccountController extends AllControllers {
+  + handleCreateAccountButton()
+}
+class UsersInterfaceController extends AllControllers {
+  + handleVirementButton()
+  + handleLoanButton()
+  + handleCryptoButton()
+  + handleInvestmentButton()
+}
+class VirementController extends AllControllers{
+  + handleTransferButton()
+  + handleReturnButton()
+}
+class LoanController extends AllControllers {
+  + handleValidButton()
+  + handleReturnButton()
+}
+class CryptoController extends AllControllers {
+  // to be designed
+  + handleReturnButton()
+}
+class InvestmentController extends AllControllers {
+  // to be designed
+  + handleReturnButton()
+}
+
+
+
+
+@enduml
