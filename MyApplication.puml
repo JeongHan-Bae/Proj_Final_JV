@@ -1,62 +1,113 @@
 @startuml
-
 skinparam class {
   BackgroundColor Snow
 }
-MyApplication --|> javafx.application.Application
-MyApplication --|> AllControllers
-AllControllers *--* FXMLLoader : uses
-AllControllers --* ClientEnd : calls
+
+package Data {
+  class UserObj {
+    - username : String
+    - first_name : String
+    - family_name : String
+    - telephone : String
+    - e_mail : String
+    - account : BankAccount
+  }
+
+  class BankAccount {
+    - currency : float
+    - deposit : float
+    - debt : float
+    - investment : InvestmentObj
+  }
+
+  class InvestmentObj {
+    - currDataMap: HashMap<String, Float>
+    + addCurrDataEntry(name: String, value: Float): void
+  }
+
+  class GlobalObj {
+    - dataMap: HashMap<String, HashMap<String, Float>>
+    - currDataMap: HashMap<String, Float>
+    + addDataEntry(date: String, innerMap: HashMap<String, Float>): void
+    + addCurrDataEntry(name: String, value: Float): void
+  }
+}
+
+package Tool {
+  class JavaClient {
+    + sendAndReceive(s: String): String
+  }
+
+  class PasswordHasher {
+    + hashPassword(password: String): int
+  }
+}
+
+package com.example.partjava {
+  MyApplication --|> javafx.application.Application
+  MyApplication --> Stage
+  Stage --> Scene
+  Scene --> FXMLLoader
+  UserObj --* BankAccount : contains
+  BankAccount --* InvestmentObj : contains
+  class LoginController {
+      + handleLoginButton()
+      + handleCreateAccountButton()
+  }
+  class NewAccountController {
+    + handleCreateAccountButton()
+    + handleReturnButton()
+  }
+  class UsersInterfaceController {
+    + handleVirementButton()
+    + handleLoanButton()
+    + handleCryptoButton()
+    + handleInvestmentButton()
+  }
+  class VirementController{
+    + handleTransferButton()
+    + handleReturnButton()
+  }
+  class LoanController {
+    + handleValidButton()
+    + handleReturnButton()
+  }
+  class CryptoController{
+    + handleViewButton()
+    + handlePurchaseButton()
+    + handleSellButton()
+    + handleReturnButton()
+  }
+  class InvestmentController{
+    + handleViewSelfButton()
+    + handleViewGlobalButton()
+    + handleReturnButton()
+  }
+  LoginController *--* NewAccountController
+  LoginController --* UsersInterfaceController
+  UsersInterfaceController *--* VirementController
+  UsersInterfaceController *--* LoanController
+  UsersInterfaceController *--* CryptoController
+  UsersInterfaceController *--* InvestmentController
+}
+
+JavaClient <--> Server : interact
+LoginController --> JavaClient : calls
 LoginController --> PasswordHasher : calls
+LoginController --> GlobalObj : interact
+LoginController --> UserObj : interact
+NewAccountController --> JavaClient : calls
 NewAccountController --> PasswordHasher : calls
-ClientEnd <--> Server : interact
-MyApplication --> Stage
-Stage --> Scene
-Scene --> FXMLLoader
-class MyApplication
-class AllControllers {
-  + interact(s: String): String
-}
-class ClientEnd {
-  + interact(s: String): String
-}
-class PasswordHasher {
-  + hashPassword(password: String): int
-}
-class Stage
-class Scene
-class FXMLLoader
-class LoginController extends AllControllers {
-  + handleLoginButton()
-  + handleCreateAccountButton()
-}
-class NewAccountController extends AllControllers {
-  + handleCreateAccountButton()
-}
-class UsersInterfaceController extends AllControllers {
-  + handleVirementButton()
-  + handleLoanButton()
-  + handleCryptoButton()
-  + handleInvestmentButton()
-}
-class VirementController extends AllControllers{
-  + handleTransferButton()
-  + handleReturnButton()
-}
-class LoanController extends AllControllers {
-  + handleValidButton()
-  + handleReturnButton()
-}
-class CryptoController extends AllControllers {
-  // to be designed
-  + handleReturnButton()
-}
-class InvestmentController extends AllControllers {
-  // to be designed
-  + handleReturnButton()
-}
+VirementController --> JavaClient : calls
+VirementController --> UserObj : calls
+LoanController --> JavaClient : calls
+LoanController --> UserObj : calls
+CryptoController -->  JavaClient : calls
+CryptoController --> GlobalObj : calls
+CryptoController --> UserObj : calls
+InvestmentController --> GlobalObj : calls
+InvestmentController --> UserObj : calls
 
-
-
-
+hide circle
+hide empty members
 @enduml
