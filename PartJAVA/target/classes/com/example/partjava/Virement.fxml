@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.partjava.VirementController">
+    <children>
+        <Label fx:id="currencyLabel" layoutX="50.0" layoutY="160.0" text="Currency: {UserObj.account.currency}" />
+
+        <Label layoutX="50.0" layoutY="100.0" text="Beneficiary" />
+        <TextField fx:id="beneficiaryField" layoutX="200.0" layoutY="100.0" />
+
+        <Label layoutX="50.0" layoutY="150.0" text="Amount" />
+        <TextField fx:id="amountField" layoutX="200.0" layoutY="150.0" />
+
+        <Label layoutX="50.0" layoutY="200.0" text="Password" />
+        <TextField fx:id="passwordField" layoutX="200.0" layoutY="200.0" />
+
+        <Button layoutX="50.0" layoutY="250.0" onAction="#transfer" text="Transfer" />
+        <Button fx:id="returnButton" layoutX="193.0" layoutY="250.0" onAction="#onReturnButtonClick" text="Return" />
+    </children>
+</AnchorPane>

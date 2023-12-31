@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.2-ea"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.partjava.CryptoController">
+    <Button layoutX="48.0" layoutY="24.0" onAction="#showSaleList" text="Show Sale List"/>
+    <Button layoutX="265.0" layoutY="24.0" onAction="#showPurchaseList" text="Show Purchase List"/>
+    <Button layoutX="69.0" layoutY="63.0" onAction="#action" text="Action"/>
+    <Button layoutX="299.0" layoutY="63.0" onAction="#order" text="Order"/>
+    <Button fx:id="refreshButton" layoutX="498.0" layoutY="24.0" onAction="#refresh" text="Refresh"/>
+    <Button fx:id="returnButton" layoutX="200.0" layoutY="346.0" onAction="#onReturnButtonClick" text="Return"/>
+    <TextArea fx:id="outputArea" layoutX="50.0" layoutY="100.0" prefHeight="200.0" prefWidth="500.0"/>
+    <!-- Labels for currency, coin value, and coin amount -->
+    <Label fx:id="currencyLabel" layoutX="50.0" layoutY="320.0" text="Currency: {UserObj.account.currency}"/>
+    <Label fx:id="coinValueLabel" layoutX="50.0" layoutY="347.0" text="Coin Value: {GlobalObj.coin}"/>
+    <Label fx:id="coinAmountLabel" layoutX="299.0" layoutY="320.0"
+           text="Coins Owned: {UserObj.account.investment.coins}"/>
+</AnchorPane>

@@ -1,70 +1,89 @@
 package com.example.partjava;
 
+import Data.BankAccount;
+import Data.GlobalObj;
+import Data.UserObj;
 import Tools.JavaClient;
+import Tools.Password2Hash;
+import Tools.ShowAlert;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.stage.Stage;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import java.io.IOException;
 
 public class LoginController {
 
+    public Button connectButton;
+    public Button newAccButton;
+    public Label alertLabel;
     @FXML
-    private TextField loginField;
+    private TextField usrNameField;
 
     @FXML
-    private TextField mdpField;
+    private TextField pwField;
 
     @FXML
-    private void connexionClick() {
-        String email = loginField.getText();
-        String password = mdpField.getText();
-        String loginInfo = "userLogin:" + email + " " + password;
+    private void connexionClick(){
+        String userName = usrNameField.getText();
+        String password = pwField.getText();
+        String loginInfo = "userLogin:" + userName + " " + Password2Hash.hashPassword(password);
+        String bankInfo = "getBank:" + userName;
+        // Commands of login and get bank info
         System.out.println(loginInfo);
         JavaClient client = new JavaClient();
         String userInfo = client.sendAndReceive(loginInfo);
-        System.out.println(userInfo);
-        client.close();
 
         if ("Invalid user data".equals(userInfo)) {
-            showAlert("Invalid User Data", "Invalid user data. Please check your credentials.");
+            ShowAlert.Warning("Invalid User Data", "Invalid user data. Please check your credentials.");
+            client.close();
         } else {
-            System.out.println(userInfo);
+            String[] userInfoParts = userInfo.split(" ");
+
+            userInfoParts[0] = userInfoParts[0].replace("<", " ");
+            userInfoParts[1] = userInfoParts[1].replace("<", " ");
+            // As spaces in the names are replaced with "<"s and "<" is surely not part of anyone's name, we replace them with spaces
+
+            UserObj.username = userName;
+            UserObj.first_name = userInfoParts[0];
+            UserObj.family_name = userInfoParts[1];
+            UserObj.telephone = userInfoParts[2];
+            UserObj.e_mail = userInfoParts[3];
+            String accInfo = client.sendAndReceive(bankInfo);
+
+            UpdateAccInfo(accInfo);
+            client.close();
+            JavaClient globalCheck = new JavaClient();
+            String globInfos = globalCheck.sendAndReceive("getGlobal:");
+            // command of getting global infos
+            GlobalObj.initializeClass(globInfos);
+            System.out.println(UserObj.toStringUserObj());
+            System.out.println(GlobalObj.toStringGlobalObj());
+            globalCheck.close();
+
+            SceneNavigator.getToInterface("UsersInterface.fxml", connectButton);
         }
     }
 
-    private void showAlert(String title, String content) {
-        Alert alert = new Alert(Alert.AlertType.WARNING);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(content);
-        alert.showAndWait();
+    static void UpdateAccInfo(String accInfo) {
+        // The global func to connect the server and update the user's bank infos
+        String[] dailyAccInfos = accInfo.split(";");
+        UserObj.accountMap.clear();
+
+        for (String dailyAccInfo : dailyAccInfos) {
+            String[] parts = dailyAccInfo.split(":");
+            String date = parts[0];
+            String infos = parts[1];
+
+            if (date.equals("curr")) {
+                UserObj.account = new BankAccount(infos);
+            } else {
+                UserObj.accountMap.put(date, new BankAccount(infos));
+            }
+        }
     }
 
     @FXML
     private void createNewAcc() {
-        try {
-            // Load the FXML file for the new account
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("NewAccount.fxml"));
-            Parent root = loader.load();
-
-            // Create a new stage for the new account
-            Stage newAccountStage = new Stage();
-            newAccountStage.setTitle("New Account");
-            newAccountStage.setScene(new Scene(root));
-
-            // Close the current login stage
-            Stage currentStage = (Stage) loginField.getScene().getWindow();
-            currentStage.close();
-
-            // Show the new account stage
-            newAccountStage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-            // Handle exception if FXML file loading fails
-        }
+        SceneNavigator.getToInterface("NewAccount.fxml", newAccButton, "New Account");
     }
 }

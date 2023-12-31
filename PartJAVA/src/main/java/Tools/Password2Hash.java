@@ -11,11 +11,18 @@ public class Password2Hash {
         }
         // Multiply all the ASCII values together
         long product = 1;
+        long helper = 1;
         for (int value : asciiValues) {
-            product *= value;
+            product *= value + (++helper);
             product %= Modulo;
         }
 
         return (int) product;
+    }
+    public static void main(String[] args) {
+        // Example: Calculate hash for "John Doe"
+        String password = "John Doe";
+        int hash = hashPassword(password);
+        System.out.println("Hash for \"" + password + "\": " + hash);
     }
 }

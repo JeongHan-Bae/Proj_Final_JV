@@ -1,64 +1,102 @@
 package com.example.partjava;
 
-import javafx.event.ActionEvent;
+import Tools.JavaClient;
+import Tools.Password2Hash;
+import Tools.ShowAlert;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 
 public class NewAccountController {
-    @FXML
-    private TextField nameField;
 
     @FXML
-    private TextField phoneField;
+    private TextField usernameField;
 
     @FXML
-    private TextField mailField;
+    private TextField firstNameField;
+
+    @FXML
+    private TextField familyNameField;
+
+    @FXML
+    private TextField telephoneField;
+
+    @FXML
+    private TextField emailField;
 
     @FXML
     private TextField passwordField;
 
     @FXML
-    private TextField passwordField2;
+    private TextField repeatPasswordField;
+
+    public Button createButton;
+
+    public Button clearButton;
+
 
     @FXML
-    private Label alerteLabel2;
-
-    @FXML
-    private Button sInscrireButton;
-
-    @FXML
-    private Button clearButton;
-
-    @FXML
-    private void inscriptionClick(ActionEvent event) {
-        // This method will be called when the "S'inscrire" button is clicked
-        String name = nameField.getText();
-        String phone = phoneField.getText();
-        String email = mailField.getText();
+    private void onCreateButtonClicked() {
+        // check every field to ensure the account infos are valid
+        String username = usernameField.getText().trim();
+        String firstName = firstNameField.getText().replace(" ", "<");
+        String familyName = familyNameField.getText().replace(" ", "<");
+        String telephone = telephoneField.getText().replace(" ", "");
+        // As we use space to split the send infos, spaces in these fields should be replaced
+        String email = emailField.getText().trim();
         String password = passwordField.getText();
-        String confirmPassword = passwordField2.getText();
+        String repeatPassword = repeatPasswordField.getText();
 
-        // Perform the registration logic here
-        // You can use the input values for creating a new account
+        // As we use space to split the send infos, username with space should be invalid
+        if (username.contains(" ")) {
+            ShowAlert.Error("Error", "Username cannot contain spaces.");
+            return;
+        }
 
-        // For demonstration purposes, let's just print the input values
-        System.out.println("Name: " + name);
-        System.out.println("Phone: " + phone);
-        System.out.println("Email: " + email);
-        System.out.println("Password: " + password);
-        System.out.println("Confirm Password: " + confirmPassword);
+        // E-mail address should have no spaces and exactly one @
+        if (email.contains(" ") || !email.contains("@") || email.lastIndexOf("@") != email.indexOf("@")) {
+            ShowAlert.Error("Error", "Invalid email format.");
+            return;
+        }
+
+        // Make sure the two passwords match
+        if (!password.equals(repeatPassword)) {
+            ShowAlert.Error("Error", "Passwords do not match.");
+            return;
+        }
+
+        // Hash the password
+        int hashedPassword = Password2Hash.hashPassword(password);
+
+        // Construct registerInfo string
+        String registerInfo = "createNewAcc:" + username + " " + firstName + " " + familyName + " " + telephone + " " + email + " " + hashedPassword;
+
+        JavaClient client = new JavaClient();
+        // Send the registration info to the server
+        String attempt = client.sendAndReceive(registerInfo);
+
+        client.close();
+
+        System.out.println(attempt);
+        if ("1".equals(attempt)) {
+            // New account created successfully
+            ShowAlert.Information("Info", "New account created successfully.");
+            // Load the Login.fxml and close the current stage
+            SceneNavigator.getToInterface("Login.fxml", createButton, "Login");
+        } else{
+            // Username already exists
+            ShowAlert.Warning("Registration failed","User already exists. Choose a different username.");
+        }
     }
 
     @FXML
-    private void clearClick(ActionEvent event) {
-        // This method will be called when the "Clear" button is clicked
-        nameField.clear();
-        phoneField.clear();
-        mailField.clear();
+    private void onClearButtonClicked() {
+        usernameField.clear();
+        firstNameField.clear();
+        familyNameField.clear();
+        telephoneField.clear();
+        emailField.clear();
         passwordField.clear();
-        passwordField2.clear();
-        alerteLabel2.setText(""); // Clear any previous alert messages
+        repeatPasswordField.clear();
     }
 }
