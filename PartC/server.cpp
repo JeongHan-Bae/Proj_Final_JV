@@ -1,22 +1,56 @@
 #include <iostream>
 #include <fstream>
+#include <unordered_map>
 #include <rapidjson/document.h>
 #include <rapidjson/writer.h>
-#include <rapidjson/stringbuffer.h>
 #include <winsock2.h>
 #include <thread>
 #include <vector>
-#include <sstream>
 #include <ctime>
 #include <iomanip>
 #include <mutex>
 #include <cstring>
 
 using namespace rapidjson;
-std::string curr_user;
 bool launch;
 std::vector<std::thread> clientThreads;
 std::mutex launchMutex;
+std::unordered_map<std::string, int> operationMap = {
+        {"createNewAcc", 1},
+        {"userLogin", 2},
+        {"add", 3},
+        {"getBank", 4},
+        {"getGlobal", 5},
+        {"sellStock", 6},
+        {"buyStock", 7},
+        {"applyLoan", 8},
+        {"transfer", 9},
+        {"getCoinVal", 10},
+        {"sellCoins", 11},
+        {"buyCoins", 12},
+        {"pushOrder", 13}
+};
+
+void update(const std::string& user, Document& DataBase){
+    std::time_t now = std::time(nullptr);
+    std::tm* localTime = std::localtime(&now);
+    std::ostringstream dateStream;
+    dateStream << std::put_time(localTime, "%d/%m/%Y");
+    std::string currentDate = dateStream.str();
+
+    // Check if 'currentDate' exists in DataBase[user.c_str()]
+    Value& userEntry = DataBase[user.c_str()];
+    if (userEntry.HasMember(currentDate.c_str())) {
+        // Replace existing 'currentDate' entry with new values
+        userEntry[currentDate.c_str()].CopyFrom(userEntry["curr"], DataBase.GetAllocator());
+    } else {
+        // Create 'currentDate' and copy values from 'DataBase[user.c_str()]["curr"]'
+        Value currentDateObj(kObjectType);
+        currentDateObj.CopyFrom(userEntry["curr"], DataBase.GetAllocator());
+        userEntry.AddMember(Value(currentDate.c_str(), DataBase.GetAllocator()), currentDateObj, DataBase.GetAllocator());
+    }
+}
+
 
 bool createNewAcc(const std::string& infos, Document& Login, Document& DataBase) {
     std::istringstream iss(infos);
@@ -25,10 +59,10 @@ bool createNewAcc(const std::string& infos, Document& Login, Document& DataBase)
 
     const std::string& user = parts[0];
     if (Login.HasMember(user.c_str())) {
-        return false;  // L'utilisateur existe déjà
+        return false;  // user already exist
     }
 
-    // Ajouter l'utilisateur à Login
+    // add user to login
     Value userObject(kObjectType);
     userObject.AddMember("hash_password", Value(parts[1].c_str(), Login.GetAllocator()), Login.GetAllocator());
     userObject.AddMember("first_name", Value(parts[2].c_str(), Login.GetAllocator()), Login.GetAllocator());
@@ -41,7 +75,7 @@ bool createNewAcc(const std::string& infos, Document& Login, Document& DataBase)
     Value key(user.c_str(), Login.GetAllocator());
     Login.AddMember(key, userObject, Login.GetAllocator());
 
-    // Ajouter l'utilisateur à DataBase avec la date actuelle
+    // add user to database
     std::time_t now = std::time(nullptr);
     std::tm* localTime = std::localtime(&now);
     std::ostringstream dateStream;
@@ -51,7 +85,7 @@ bool createNewAcc(const std::string& infos, Document& Login, Document& DataBase)
     if (!DataBase.HasMember(user.c_str())) {
         Value userDatabaseObject(kObjectType);
         Value currObject(kObjectType);
-        userDatabaseObject.AddMember("currency", 0.0, DataBase.GetAllocator());
+        userDatabaseObject.AddMember("currency", 500.0, DataBase.GetAllocator());
         userDatabaseObject.AddMember("deposit", 0.0, DataBase.GetAllocator());
         userDatabaseObject.AddMember("debt", 0.0, DataBase.GetAllocator());
         Value investmentObject(kObjectType);
@@ -78,7 +112,7 @@ bool createNewAcc(const std::string& infos, Document& Login, Document& DataBase)
 }
 
 
-bool userLogin(const std::string& login_infos, Document& Login) {
+bool userLogin(const std::string& login_infos, const Document& Login, std::string& response) {
     // Split login_infos with space as delimiter
     std::istringstream iss(login_infos);
     std::vector<std::string> loginParts(std::istream_iterator<std::string>{iss},
@@ -86,6 +120,7 @@ bool userLogin(const std::string& login_infos, Document& Login) {
 
     if (loginParts.size() < 2) {
         // Insufficient login information
+        response = "Insufficient login information\n";
         return false;
     }
 
@@ -99,25 +134,34 @@ bool userLogin(const std::string& login_infos, Document& Login) {
 
         if (storedPassword.IsString() && storedPassword.GetString() == hash_password) {
             // Valid login
-            curr_user = user;
+            if (userIter->value.HasMember("first_name") && userIter->value["first_name"].IsString() &&
+                userIter->value.HasMember("family_name") && userIter->value["family_name"].IsString() &&
+                userIter->value.HasMember("telephone") && userIter->value["telephone"].IsString() &&
+                userIter->value.HasMember("e_mail") && userIter->value["e_mail"].IsString()) {
+
+                response = std::string(userIter->value["first_name"].GetString()) + " " +
+                           std::string(userIter->value["family_name"].GetString()) + " " +
+                           std::string(userIter->value["telephone"].GetString()) + " " +
+                           std::string(userIter->value["e_mail"].GetString()) + "\n";
+            }
             return true;
         }
     }
-
     // Invalid login
+    response = "Invalid user data\n";
     return false;
 }
 
 
-bool find_user(const std::string& user, Document& DataBase){
-    if (!DataBase.HasMember(user.c_str()) || !DataBase[user.c_str()].HasMember("curr")) {
-        return false;
+bool find_user(const std::string& user, const Document& DataBase) {
+    if (DataBase.HasMember(user.c_str()) && DataBase[user.c_str()].HasMember("curr")) {
+        return true;
     }
-    return true;
+    return false;
 }
 
 
-bool addCurrency(const std::string& infos, Document& DataBase) {
+bool add(const std::string& infos, Document& DataBase) {
     // Split infos with space as delimiter
     std::istringstream iss(infos);
     std::vector<std::string> parts(std::istream_iterator<std::string>{iss}, std::istream_iterator<std::string>());
@@ -128,10 +172,10 @@ bool addCurrency(const std::string& infos, Document& DataBase) {
     }
 
     const std::string& user = parts[0];
-    const std::string& amountStr = parts[1];
+    const std::string& type = parts[1];
+    const std::string& amountStr = parts[2];
 
-    // Convert amount to float
-    float amount;
+    double amount;
     try {
         amount = std::stof(amountStr);
     } catch (const std::invalid_argument& e) {
@@ -143,46 +187,572 @@ bool addCurrency(const std::string& infos, Document& DataBase) {
     if (!find_user(user, DataBase)) {
         return false;
     }
-
-    // Get the current date
-    std::time_t now = std::time(nullptr);
-    std::tm* localTime = std::localtime(&now);
-    std::ostringstream dateStream;
-    dateStream << std::put_time(localTime, "%d/%m/%Y");
-    std::string currentDate = dateStream.str();
-
-    // Check if the user has the "curr" entry
-    if (!DataBase[user.c_str()].HasMember("curr")) {
+    if (type == "currency"){
+        double currency = DataBase[user.c_str()]["curr"]["currency"].GetDouble();
+        currency += amount;
+        DataBase[user.c_str()]["curr"]["currency"].SetDouble(currency);
+    } else if (type == "deposit"){
+        double deposit = DataBase[user.c_str()]["curr"]["deposit"].GetDouble();
+        deposit += amount;
+        DataBase[user.c_str()]["curr"]["deposit"].SetDouble(deposit);
+    } else if (type == "debt"){
+        double debt = DataBase[user.c_str()]["curr"]["debt"].GetDouble();
+        debt += amount;
+        DataBase[user.c_str()]["curr"]["debt"].SetDouble(debt);
+    } else {
         return false;
     }
+    update(user, DataBase);
 
-    // Copy the "curr" entry to the current date
-    Value& currObject = DataBase[user.c_str()]["curr"];  // Use 'user' instead of 'curr_user'
-    currObject["currency"] = currObject["currency"].GetFloat() + amount;
-
-    // Create a new object for the current date
-    Value currentDateObject(kObjectType);
-    currentDateObject.CopyFrom(currObject, DataBase.GetAllocator());
-
-    // Add the new object to the user's data under the current date
-    const Value& userObject = DataBase[user.c_str()];
-    if (userObject.HasMember(currentDate.c_str())) {
-        // Update the existing entry for the current date
-        Value& currentDateObject = DataBase[user.c_str()][currentDate.c_str()];
-        currentDateObject["currency"] = currentDateObject["currency"].GetFloat() + amount;
-    } else {
-        // Create a new object for the current date
-        Value currentDateObject(kObjectType);
-        currentDateObject.AddMember("currency", amount, DataBase.GetAllocator());
-
-        // Add the new object to the user's data under the current date
-        DataBase[user.c_str()].AddMember(Value(currentDate.c_str(), DataBase.GetAllocator()), currentDateObject, DataBase.GetAllocator());
-    }
     return true;
 }
 
 
-void HandleClient(SOCKET clientSocket, Document& logIn, Document& dataBase) {
+bool getBank(const std::string& infos, const Document& DataBase, std::string& response) {
+    std::istringstream iss(infos);
+    std::vector<std::string> parts(std::istream_iterator<std::string>{iss},
+                                   std::istream_iterator<std::string>());
+
+    const std::string& user = parts[0];
+    if (find_user(user, DataBase)) {
+        for (Value::ConstMemberIterator it = DataBase[user.c_str()].MemberBegin(); it != DataBase[user.c_str()].MemberEnd(); ++it) {
+            const std::string& date = it->name.GetString();
+            const Value& dateData = it->value;
+
+            response += date + ':' + std::to_string(dateData["currency"].GetDouble()) + ' ' +
+                        std::to_string(dateData["deposit"].GetDouble()) + ' ' +
+                        std::to_string(dateData["debt"].GetDouble()) + '|';
+
+            // Iterate over investments
+            for (Value::ConstMemberIterator investmentIt = dateData["investment"].MemberBegin();
+                 investmentIt != dateData["investment"].MemberEnd(); ++investmentIt) {
+                const std::string& investmentName = investmentIt->name.GetString();
+                const Value& investmentValue = investmentIt->value;
+
+                response += investmentName + ' ' + std::to_string(investmentValue.GetDouble()) + ',';
+            }
+            if (!response.empty() && response.back() == ',') {
+                // Remove the last character
+                response.pop_back();
+            }
+            response += ';';
+        }
+        if (!response.empty() && response.back() == ';') {
+            // Remove the last character
+            response.pop_back();
+        }
+        response += '\n';
+        return true;
+    }
+    response = "Invalid user data\n";
+    return false;
+}
+
+
+void processGlobal(const Document& global, std::string& response) {
+    // Process "saleCoins"
+    if (global.HasMember("saleCoins") && global["saleCoins"].IsObject()) {
+        const Value& saleCoins = global["saleCoins"];
+        for (Value::ConstMemberIterator it = saleCoins.MemberBegin(); it != saleCoins.MemberEnd(); ++it) {
+            response += it->name.GetString();
+            response += ' ';
+            response += std::to_string(it->value.GetDouble());
+            response += ',';
+        }
+        if (!response.empty() && response.back() == ',') {
+            response.pop_back(); // Remove the last character
+        }
+        response += ';';
+    }
+
+    // Process "buyCoins"
+    if (global.HasMember("buyCoins") && global["buyCoins"].IsObject()) {
+        const Value& buyCoins = global["buyCoins"];
+        for (Value::ConstMemberIterator it = buyCoins.MemberBegin(); it != buyCoins.MemberEnd(); ++it) {
+            response += it->name.GetString();
+            response += ' ';
+            response += std::to_string(it->value.GetDouble());
+            response += ',';
+        }
+        if (!response.empty() && response.back() == ',') {
+            response.pop_back(); // Remove the last character
+        }
+        response += ';';
+    }
+
+    // Process "coin"
+    if (global.HasMember("coin") && global["coin"].IsDouble()) {
+        response += std::to_string(global["coin"].GetDouble());
+        response += ';';
+    }
+
+    // Process "coinMap"
+    if (global.HasMember("coinMap") && global["coinMap"].IsObject()) {
+        const Value& coinMap = global["coinMap"];
+        for (Value::ConstMemberIterator it = coinMap.MemberBegin(); it != coinMap.MemberEnd(); ++it) {
+            response += it->name.GetString();
+            response += ' ';
+            response += std::to_string(it->value.GetDouble());
+            response += ',';
+        }
+        if (!response.empty() && response.back() == ',') {
+            response.pop_back(); // Remove the last character
+        }
+        response += ';';
+    }
+
+    // Process "currDataMap"
+    if (global.HasMember("currDataMap") && global["currDataMap"].IsObject()) {
+        const Value& currDataMap = global["currDataMap"];
+        for (Value::ConstMemberIterator it = currDataMap.MemberBegin(); it != currDataMap.MemberEnd(); ++it) {
+            response += it->name.GetString();
+            response += ' ';
+            response += std::to_string(it->value.GetDouble());
+            response += ',';
+        }
+        if (!response.empty() && response.back() == ',') {
+            response.pop_back(); // Remove the last character
+        }
+        response += ';';
+    }
+
+    // Process "dataMap"
+    if (global.HasMember("dataMap") && global["dataMap"].IsObject()) {
+        const Value& dataMap = global["dataMap"];
+        for (Value::ConstMemberIterator it = dataMap.MemberBegin(); it != dataMap.MemberEnd(); ++it) {
+            response += it->name.GetString();
+            response += ':';
+
+            // Process nested values
+            const Value& nestedValues = it->value;
+            if (nestedValues.IsObject()) {
+                for (Value::ConstMemberIterator nestedIt = nestedValues.MemberBegin(); nestedIt != nestedValues.MemberEnd(); ++nestedIt) {
+                    response += nestedIt->name.GetString();
+                    response += ' ';
+                    response += std::to_string(nestedIt->value.GetDouble());
+                    response += ',';
+                }
+                if (!response.empty() && response.back() == ',') {
+                    response.pop_back(); // Remove the last character
+                }
+            }
+            response += '|';
+        }
+        if (!response.empty() && response.back() == '|') {
+            response.pop_back(); // Remove the last character
+        }
+    }
+    response += '\n';
+}
+
+
+bool sellStock(const std::string& infos, Document& DataBase, const Document& Global, const Document& Login, std::string& response) {
+    std::istringstream iss(infos);
+    std::vector<std::string> parts(std::istream_iterator<std::string>{iss},
+                                   std::istream_iterator<std::string>());
+
+    // Ensure that there are at least three parts
+    if (parts.size() < 4) {
+        response = "Failed\n";
+        return false;
+    }
+
+    const std::string user = parts[0];
+    std::string company = parts[1];
+    const double amount = stod(parts[2]);
+    const std::string hash_password = parts[3];
+
+    if(Login[user.c_str()]["hash_password"].GetString() != hash_password){
+        response = "Wrong Password\n";
+        return false;
+    }
+    // Check if user exists in the database
+    if (!find_user(user, DataBase)) {
+        response = "Failed\n";
+        return false;
+    }
+
+    if (!DataBase.HasMember(user.c_str()) || !DataBase[user.c_str()].HasMember("curr") || !DataBase[user.c_str()]["curr"].HasMember("currency")) {
+        response = "Failed: User or currency not found\n";
+        return false;
+    }
+    // Get the price from Global["currDataMap"]
+    double price = Global["currDataMap"][company.c_str()].GetDouble();
+
+    // Update currency with new value
+    double currentCurrency = DataBase[user.c_str()]["curr"]["currency"].GetDouble();
+    double newCurrency = currentCurrency + (price * amount);
+    DataBase[user.c_str()]["curr"]["currency"].SetDouble(newCurrency);
+    response = std::to_string(newCurrency) + '\n';
+    Value& investment = DataBase[user.c_str()]["curr"]["investment"];
+
+    double restAmount = DataBase[user.c_str()]["curr"]["investment"][company.c_str()].GetDouble() - amount;
+    // Update the investment for the 'company'
+
+    if (restAmount > 0) {
+        // If restAmount is greater than 0, update the value
+        investment[company.c_str()].SetDouble(restAmount);
+    } else {
+        // If restAmount is 0 or negative, remove the entry
+        investment.RemoveMember(company.c_str());
+    }
+    update(user, DataBase);
+
+    return true;
+}
+
+
+bool buyStock(const std::string& infos, Document& DataBase, const Document& Global, const Document& Login, std::string& response) {
+    std::istringstream iss(infos);
+    std::vector<std::string> parts(std::istream_iterator<std::string>{iss},
+                                   std::istream_iterator<std::string>());
+
+    // Ensure that there are at least three parts
+    if (parts.size() < 4) {
+        response = "Failed\n";
+        return false;
+    }
+    const std::string user = parts[0];
+    std::string company = parts[1];
+    const double amount = stod(parts[2]);
+    const std::string hash_password = parts[3];
+
+    if(Login[user.c_str()]["hash_password"].GetString() != hash_password){
+        response = "Wrong Password\n";
+        return false;
+    }
+    // Check if user exists in the database
+    if (!find_user(user, DataBase)) {
+        response = "Failed\n";
+        return false;
+    }
+    // Get the price from Global["currDataMap"]
+    double price = Global["currDataMap"][company.c_str()].GetDouble();
+
+    // Update currency with new value
+    double currentCurrency = DataBase[user.c_str()]["curr"]["currency"].GetDouble();
+    double newCurrency = currentCurrency - (price * amount);
+    DataBase[user.c_str()]["curr"]["currency"].SetDouble(newCurrency);
+    response = std::to_string(newCurrency) + '\n';
+    // Check if 'investment' exists in DataBase[user.c_str()]["curr"]
+    Value& investment = DataBase[user.c_str()]["curr"]["investment"];
+    if (investment.HasMember(company.c_str()) && investment[company.c_str()].IsNumber()) {
+        // If 'investment' has attribute 'company.c_str()', get the value as double, add the amount, and set the value
+        double currentInvestment = investment[company.c_str()].GetDouble();
+        double updatedInvestment = currentInvestment + amount;
+        investment[company.c_str()].SetDouble(updatedInvestment);
+    } else {
+        // Else, create the attribute and set the value as amount
+        investment.AddMember(Value(company.c_str(), DataBase.GetAllocator()).Move(), amount, DataBase.GetAllocator());
+    }
+    update(user, DataBase);
+
+    return true;
+}
+
+
+bool applyLoan(const std::string& infos, Document& DataBase, const Document& Login){
+    std::istringstream iss(infos);
+    std::vector<std::string> parts(std::istream_iterator<std::string>{iss},
+                                   std::istream_iterator<std::string>());
+
+    // Ensure that there are at least three parts
+    if (parts.size() < 4) {
+        return false;
+    }
+    const std::string user = parts[0];
+    const double amount = stod(parts[1]);
+    const double rate = stod(parts[2]);
+    const std::string hash_password = parts[3];
+
+    if(Login[user.c_str()]["hash_password"].GetString() != hash_password){
+        return false;
+    }
+    // Get and update currency
+    double currency = DataBase[user.c_str()]["curr"]["currency"].GetDouble();
+    currency += amount;
+    DataBase[user.c_str()]["curr"]["currency"].SetDouble(currency);
+
+    // Get and update debt
+    double debt = DataBase[user.c_str()]["curr"]["debt"].GetDouble();
+    debt -= amount * (1 + rate);
+    DataBase[user.c_str()]["curr"]["debt"].SetDouble(debt);
+
+    return true;
+}
+
+
+bool transfer(const std::string& infos, Document& DataBase, const Document& Login, std::string& response){
+    std::istringstream iss(infos);
+    std::vector<std::string> parts(std::istream_iterator<std::string>{iss},
+                                   std::istream_iterator<std::string>());
+
+    // Ensure that there are at least three parts
+    if (parts.size() < 4) {
+        return false;
+    }
+
+    const std::string user = parts[0];
+    const double amount = stod(parts[1]);
+    const std::string beneficiary = parts[2];
+    const std::string hash_password = parts[3];
+
+    if(Login[user.c_str()]["hash_password"].GetString() != hash_password){
+        response = "Wrong password\n";
+        return false;
+    }
+    if(!find_user(beneficiary, DataBase)){
+        response = "Beneficiary doesn't exist\n";
+        return false;
+    }
+    double myCurrency = DataBase[user.c_str()]["curr"]["currency"].GetDouble();
+    myCurrency -= amount;
+    DataBase[user.c_str()]["curr"]["currency"].SetDouble(myCurrency);
+
+    double benCurrency = DataBase[beneficiary.c_str()]["curr"]["currency"].GetDouble();
+    benCurrency += amount;
+    DataBase[beneficiary.c_str()]["curr"]["currency"].SetDouble(benCurrency);
+    update(user, DataBase);
+    update(beneficiary, DataBase);
+
+    response = "success\n";
+
+    return true;
+}
+
+
+void getCoinVal(const Document& Global, std::string& response){
+    response = std::to_string(Global["coin"].GetDouble()) + '\n';
+}
+
+
+bool sellCoins(const std::string& infos, Document& DataBase, Document& Global, const Document& Login, std::string& response){
+    std::istringstream iss(infos);
+    std::vector<std::string> parts(std::istream_iterator<std::string>{iss},
+                                   std::istream_iterator<std::string>());
+
+    // Ensure that there are at least three parts
+    if (parts.size() < 3) {
+        return false;
+    }
+
+    const std::string user = parts[0];
+    const std::string client = parts[1];
+    const std::string hash_password = parts[2];
+
+    if(Login[user.c_str()]["hash_password"].GetString() != hash_password){
+        response = "Wrong password\n";
+        return false;
+    }
+    if(!find_user(client, DataBase)){
+        response = "Client doesn't exist\n";
+        return false;
+    }
+    if(!Global["buyCoins"].HasMember(client.c_str())){
+        response = "Client doesn't exist\n";
+        return false;
+    }
+    if(!DataBase[user.c_str()]["curr"]["investment"].HasMember("coin")){
+        response = "Don't have enough Coins\n";
+        return false;
+    }
+    double coinNum = DataBase[user.c_str()]["curr"]["investment"]["coin"].GetDouble();
+    double currency = Global["buyCoins"][client.c_str()].GetDouble();
+    double coinVal = Global["coin"].GetDouble();
+    double coinAmount = currency / coinVal;
+
+    if(coinNum < coinAmount){
+        response = "Don't have enough Coins\n";
+        return false;
+    }
+    coinNum -= coinAmount;
+    DataBase[user.c_str()]["curr"]["investment"]["coin"].SetDouble(coinNum);
+
+    double userCurrency = DataBase[user.c_str()]["curr"]["currency"].GetDouble();
+    userCurrency += currency;
+    DataBase[user.c_str()]["curr"]["currency"].SetDouble(userCurrency);
+
+    response = std::to_string(DataBase[user.c_str()]["curr"]["investment"]["coin"].GetDouble()) +
+               " " +
+               std::to_string(DataBase[user.c_str()]["curr"]["currency"].GetDouble()) + '\n';
+
+    if(DataBase[client.c_str()]["curr"]["investment"].HasMember("coin")){
+        double clientCoins = DataBase[client.c_str()]["curr"]["investment"]["coins"].GetDouble();
+        clientCoins += coinAmount;
+        DataBase[client.c_str()]["curr"]["investment"]["coins"].SetDouble(clientCoins);
+    } else {
+        Value coinAmountValue;
+        coinAmountValue.SetDouble(coinAmount);
+        DataBase[client.c_str()]["curr"]["investment"].AddMember("coins", coinAmountValue, DataBase.GetAllocator());
+    }
+    Global["buyCoins"].RemoveMember(client.c_str());
+
+    update(user, DataBase);
+    update(client, DataBase);
+
+    return true;
+}
+
+
+bool buyCoins(const std::string& infos, Document& DataBase, Document& Global, const Document& Login, std::string& response){
+    std::istringstream iss(infos);
+    std::vector<std::string> parts(std::istream_iterator<std::string>{iss},
+                                   std::istream_iterator<std::string>());
+
+    // Ensure that there are at least three parts
+    if (parts.size() < 3) {
+        return false;
+    }
+
+    const std::string user = parts[0];
+    const std::string client = parts[1];
+    const std::string hash_password = parts[2];
+
+    if(Login[user.c_str()]["hash_password"].GetString() != hash_password){
+        response = "Wrong password\n";
+        return false;
+    }
+    if(!find_user(client, DataBase)){
+        response = "Client doesn't exist\n";
+        return false;
+    }
+    if(!Global["sellCoins"].HasMember(client.c_str())){
+        response = "Client doesn't exist\n";
+        return false;
+    }
+
+
+    double currency = DataBase[user.c_str()]["curr"]["currency"].GetDouble();
+    double coinAmount = Global["sellCoins"][client.c_str()].GetDouble();
+    double coinVal = Global["coin"].GetDouble();
+    double price = coinAmount * coinVal;
+
+    if(currency < price){
+        response = "Don't have enough Currency\n";
+        return false;
+    }
+    currency -= price;
+    DataBase[user.c_str()]["curr"]["currency"].SetDouble(currency);
+
+    if(DataBase[user.c_str()]["curr"]["investment"].HasMember("coin")){
+        double userCoins = DataBase[client.c_str()]["curr"]["investment"]["coins"].GetDouble();
+        userCoins += coinAmount;
+        DataBase[user.c_str()]["curr"]["investment"]["coins"].SetDouble(userCoins);
+    } else {
+        Value coinAmountValue;
+        coinAmountValue.SetDouble(coinAmount);
+        DataBase[user.c_str()]["curr"]["investment"].AddMember("coins", coinAmountValue, DataBase.GetAllocator());
+    }
+
+    double clientCurrency = DataBase[client.c_str()]["curr"]["currency"].GetDouble();
+    clientCurrency += currency;
+    DataBase[user.c_str()]["curr"]["currency"].SetDouble(clientCurrency);
+
+    response = std::to_string(DataBase[user.c_str()]["curr"]["investment"]["coin"].GetDouble()) +
+               " " +
+               std::to_string(DataBase[user.c_str()]["curr"]["currency"].GetDouble()) + '\n';
+
+
+    Global["sellCoins"].RemoveMember(client.c_str());
+
+    update(user, DataBase);
+    update(client, DataBase);
+
+    return true;
+}
+
+
+bool pushOrder(const std::string& infos, Document& DataBase, Document& Global, const Document& Login, std::string& response){
+    std::istringstream iss(infos);
+    std::vector<std::string> parts(std::istream_iterator<std::string>{iss},
+                                   std::istream_iterator<std::string>());
+
+    // Ensure that there are at least three parts
+    if (parts.size() < 4) {
+        return false;
+    }
+
+    const std::string user = parts[0];
+    const std::string type = parts[1];
+    double amount = std::stod(parts[2]);
+    const std::string hash_password = parts[3];
+
+    if(Login[user.c_str()]["hash_password"].GetString() != hash_password){
+        response = "Wrong password\n";
+        return false;
+    }
+    double currency = DataBase[user.c_str()]["curr"]["currency"].GetDouble();
+
+    if (type == "Purchase") {
+        if (amount > currency) {
+            response = "Not enough Liquid\n";
+            return false;
+        }
+
+        if (Global["buyCoins"].HasMember(user.c_str())) {
+            response = "Duplicate\n";
+            return false;
+        } else {
+            Global["buyCoins"].AddMember(Value(user.c_str(), DataBase.GetAllocator()).Move(), amount, DataBase.GetAllocator());
+            currency -= amount;
+            DataBase[user.c_str()]["curr"]["currency"].SetDouble(currency);
+        }
+
+    } else if (type == "~Purchase") {
+        if (!Global["buyCoins"].HasMember(user.c_str())) {
+            response = "Not exist\n";
+            return false;
+        }
+        amount = Global["buyCoins"][user.c_str()].GetDouble();
+        Global["buyCoins"].EraseMember(user.c_str());
+        currency += amount;
+        DataBase[user.c_str()]["curr"]["currency"].SetDouble(currency);
+    } else if (type == "Sale") {
+        double coins = 0.0;
+        if(DataBase[user.c_str()]["curr"]["investment"].HasMember("coin")){
+            coins = DataBase[user.c_str()]["curr"]["investment"].GetDouble();
+        }
+        if (amount > coins) {
+            response = "Not enough Coins\n";
+            return false;
+        }
+        if (Global["sellCoins"].HasMember(user.c_str())) {
+            response = "Duplicate\n";
+            return false;
+        } else {
+            Global["sellCoins"].AddMember(Value(user.c_str(), Global.GetAllocator()).Move(), amount, Global.GetAllocator());
+            coins -= amount;
+            if (coins == 0.0){
+                DataBase[user.c_str()]["curr"]["investment"].RemoveMember("coin");
+            } else {
+                DataBase[user.c_str()]["curr"]["investment"]["coin"].SetDouble(coins);
+            }
+        }
+    } else if (type == "~Sale") {
+        if (!Global["sellCoins"].HasMember(user.c_str())) {
+            response = "Empty\n";
+            return false;
+        }
+        amount = Global["sellCoins"][user.c_str()].GetDouble();
+        Global["sellCoins"].EraseMember(user.c_str());
+
+        if(DataBase[user.c_str()]["curr"]["investment"].HasMember("coin")){
+            double coins = DataBase[user.c_str()]["curr"]["investment"].GetDouble();
+            coins += amount;
+            DataBase[user.c_str()]["curr"]["investment"]["coin"].SetDouble(coins);
+        } else {
+            DataBase[user.c_str()]["curr"]["investment"].AddMember("coins", amount, DataBase.GetAllocator());
+        }
+    }
+
+    update(user, DataBase);
+    response = "1\n";
+
+    return true;
+}
+
+
+void HandleClient(SOCKET clientSocket, Document& logIn, Document& dataBase, Document& global) {
     char buffer[1024];
     int bytesRead;
 
@@ -206,6 +776,10 @@ void HandleClient(SOCKET clientSocket, Document& logIn, Document& dataBase) {
             Writer<StringBuffer> writerLOGIN(bufferLOGIN);
             logIn.Accept(writerLOGIN);
 
+            StringBuffer bufferGLOBAL;
+            Writer<StringBuffer> writerGLOBAL(bufferGLOBAL);
+            global.Accept(writerGLOBAL);
+
             std::ofstream fileDB("../../StoreJSON/DB.json");
             fileDB << bufferDB.GetString();
             fileDB.close();
@@ -215,9 +789,16 @@ void HandleClient(SOCKET clientSocket, Document& logIn, Document& dataBase) {
             fileLOGIN << bufferLOGIN.GetString();
             fileLOGIN.close();
             std::cout <<  bufferLOGIN.GetString() <<'\n';
+
+            std::ofstream fileGLOBAL("../../StoreJSON/Global.json");
+            fileGLOBAL << bufferGLOBAL.GetString();
+            fileGLOBAL.close();
+            std::cout <<  bufferGLOBAL.GetString() <<'\n';
+
             std::lock_guard<std::mutex> lock(launchMutex);  // Lock the mutex
             launch = false;
             std::this_thread::sleep_for(std::chrono::milliseconds(1000)); // Adjust the delay as needed
+            closesocket(clientSocket);
             break;
         } else {
             // Process other commands
@@ -226,49 +807,73 @@ void HandleClient(SOCKET clientSocket, Document& logIn, Document& dataBase) {
             if (pos != std::string::npos) {
                 std::string oper = command.substr(0, pos);
                 std::string infos = command.substr(pos + 1);
-                std::cout << (command.substr(0, pos) == "addCurrency")<< std::endl;
-
-                if (oper == "createNewAcc") {
-                    bool result = createNewAcc(infos, logIn, dataBase);
-                    send(clientSocket, (result ? "1\n" : "0\n"), 2, 0);
-                } else if (oper == "userLogin") {
-                    bool result = userLogin(infos, logIn);
-                    if (result) {
-                        std::string response;
-                        auto userIterator = logIn.FindMember(curr_user.c_str());
-
-                        if (userIterator != logIn.MemberEnd()) {
-                            const Value &user = userIterator->value;
-
-                            if (user.HasMember("first_name") && user["first_name"].IsString() &&
-                                user.HasMember("family_name") && user["family_name"].IsString() &&
-                                user.HasMember("telephone") && user["telephone"].IsString() &&
-                                user.HasMember("e_mail") && user["e_mail"].IsString()) {
-
-                                response = std::string(user["first_name"].GetString()) + " " +
-                                           std::string(user["family_name"].GetString()) + " " +
-                                           std::string(user["telephone"].GetString()) + " " +
-                                           std::string(user["e_mail"].GetString()) + "\n";
-                            } else {
-                                response = "Invalid user data\n";
-                            }
-                        } else {
-                            response = "User not found\n";
-                        }
-
-                        send(clientSocket, response.c_str(), response.size(), 0);
-
+                auto it = operationMap.find(oper);
+                if (it != operationMap.end()) {
+                    bool result;
+                    std::string response;
+                    switch (it->second) {
+                        case 1:
+                            result = createNewAcc(infos, logIn, dataBase);
+                            send(clientSocket, (result ? "1\n" : "0\n"), 2, 0);
+                            break;
+                        case 2:
+                            userLogin(infos, logIn, response);
+                            send(clientSocket, response.c_str(), static_cast<int>(response.size()), 0);
+                            break;
+                        case 3:
+                            result = add(infos, dataBase);
+                            send(clientSocket, (result ? "1\n" : "0\n"), 2, 0);
+                            break;
+                        case 4:
+                            getBank(infos, dataBase, response);
+                            send(clientSocket, response.c_str(), static_cast<int>(response.size()), 0);
+                            break;
+                        case 5:
+                            processGlobal(global, response);
+                            send(clientSocket, response.c_str(), static_cast<int>(response.size()), 0);
+                            break;
+                        case 6:
+                            sellStock(infos, dataBase, global, logIn, response);
+                            send(clientSocket, response.c_str(), static_cast<int>(response.size()), 0);
+                            break;
+                        case 7:
+                            buyStock(infos, dataBase, global, logIn, response);
+                            send(clientSocket, response.c_str(), static_cast<int>(response.size()), 0);
+                            break;
+                        case 8:
+                            result = applyLoan(infos, dataBase, logIn);
+                            send(clientSocket, (result ? "1\n" : "0\n"), 2, 0);
+                            break;
+                        case 9:
+                            transfer(infos, dataBase, logIn, response);
+                            send(clientSocket, response.c_str(), static_cast<int>(response.size()), 0);
+                            break;
+                        case 10:
+                            getCoinVal(global, response);
+                            send(clientSocket, response.c_str(), static_cast<int>(response.size()), 0);
+                            break;
+                        case 11:
+                            sellCoins(infos, dataBase, global, logIn, response);
+                            send(clientSocket, response.c_str(), static_cast<int>(response.size()), 0);
+                            break;
+                        case 12:
+                            buyCoins(infos, dataBase, global, logIn, response);
+                            send(clientSocket, response.c_str(), static_cast<int>(response.size()), 0);
+                            break;
+                        case 13:
+                            pushOrder(infos, dataBase, global, logIn, response);
+                            send(clientSocket, response.c_str(), static_cast<int>(response.size()), 0);
+                            break;
+                        default:
+                            send(clientSocket, "None\n", 5, 0);
+                            break;
                     }
-                } else if (oper == "addCurrency") {
-                    std::cout << "Received addCurrency command" << std::endl;
-                    bool result = addCurrency(infos, dataBase);
-                    send(clientSocket, (result ? "1\n" : "0\n"), 2, 0);
+                } else {
+                    send(clientSocket, "None\n", 5, 0);
                 }
-
             }
         }
     }
-
     closesocket(clientSocket);
 }
 
@@ -282,12 +887,18 @@ int main() {
     std::ifstream readFileLOGIN("../../StoreJSON/Login.json");
     std::string jsonStrLOGIN((std::istreambuf_iterator<char>(readFileLOGIN)), std::istreambuf_iterator<char>());
 
+    std::ifstream readFileGLOBAL("../../StoreJSON/Global.json");
+    std::string jsonStrGLOBAL((std::istreambuf_iterator<char>(readFileGLOBAL)), std::istreambuf_iterator<char>());
+
     // Parse JSON
     Document dataBase;
     dataBase.Parse(jsonStrDB.c_str());
 
     Document logIn;
     logIn.Parse(jsonStrLOGIN.c_str());
+
+    Document global;
+    global.Parse(jsonStrGLOBAL.c_str());
 
     WSADATA wsaData;
     if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) {
@@ -342,7 +953,7 @@ int main() {
             }
         }
 
-        clientThreads.emplace_back(HandleClient, clientSocket, std::ref(logIn), std::ref(dataBase));
+        clientThreads.emplace_back(HandleClient, clientSocket, std::ref(logIn), std::ref(dataBase), std::ref(global));
     }
 
     for (auto& thread : clientThreads) {
