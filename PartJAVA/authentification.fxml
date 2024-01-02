@@ -1,20 +1,88 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.net.URL?>
+<?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.effect.Bloom?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.media.Media?>
+<?import javafx.scene.media.MediaPlayer?>
+<?import javafx.scene.media.MediaView?>
+<?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="550.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.tp9_exo2.AuthentificationController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="450.0" prefWidth="700.0" style="-fx-background-color: #F5F5F5;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.tp9_exo2.AuthentificationController">
    <children>
-      <Label fx:id="alerteLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="55.0" layoutY="51.0" prefHeight="18.0" prefWidth="433.0" textFill="#fa0101" />
-      <Text layoutX="117.0" layoutY="94.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Login (votre email) :" />
-      <TextField fx:id="loginField" layoutX="245.0" layoutY="76.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="200.0" />
-      <Text layoutX="117.0" layoutY="146.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Mot de passe :" />
-      <TextField fx:id="mdpField" layoutX="245.0" layoutY="129.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="200.0" />
-      <Button fx:id="seConnecterButton" layoutX="135.0" layoutY="209.0" mnemonicParsing="false" onAction="#connexionClick" text="&lt; Se connecter" />
-      <Button fx:id="pasDeCompteButton" layoutX="272.0" layoutY="209.0" mnemonicParsing="false" onAction="#pasDeCompteClick" text="&lt; Je n'ai pas de compte " />
+      <Text fill="DIMGRAY" layoutX="368.0" layoutY="179.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Username">
+         <font>
+            <Font name="Yu Gothic Light" size="23.0" />
+         </font></Text>
+      <TextField fx:id="loginField" layoutX="368.0" layoutY="192.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="200.0" style="-fx-background-radius: 20;">
+         <effect>
+            <Bloom />
+         </effect></TextField>
+      <Text fill="#696969" layoutX="368.0" layoutY="264.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Mot de passe ">
+         <font>
+            <Font name="Yu Gothic Light" size="23.0" />
+         </font></Text>
+      <TextField fx:id="mdpField" layoutX="368.0" layoutY="280.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="200.0" style="-fx-background-radius: 20;">
+         <cursor>
+            <Cursor fx:constant="DEFAULT" />
+         </cursor>
+         <effect>
+            <Bloom />
+         </effect></TextField>
+      <Button fx:id="seConnecterButton" alignment="CENTER" contentDisplay="CENTER" layoutX="325.0" layoutY="356.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#connexionClick" prefHeight="26.0" prefWidth="100.0" style="-fx-background-color: #443B7B; -fx-background-radius: 20;" text="LOGIN" textFill="#f7f7f7">
+         <font>
+            <Font name="Yu Gothic UI Regular" size="13.0" />
+         </font></Button>
+      <Button fx:id="pasDeCompteButton" layoutX="452.0" layoutY="357.0" mnemonicParsing="false" onAction="#pasDeCompteClick" style="-fx-border-color: transparent; -fx-background-color: transparent; -fx-border-width: 0;" text="Vous n'avez pas de compte ?" textFill="#443b7b">
+         <font>
+            <Font name="Yu Gothic Regular" size="13.0" />
+         </font></Button>
+      <AnchorPane layoutY="-16.0" prefHeight="468.0" prefWidth="270.0" style="-fx-background-color: #443b7b;">
+         <children>
+            <MediaView fitHeight="100.0" fitWidth="100.0" layoutX="31.0" layoutY="89.0">
+               <mediaPlayer>
+                  <MediaPlayer>
+                     <media>
+                        <Media>
+                           <source>
+                              <URL value="@../../../../../../../../../Downloads/Pi_C_96K.wav" />
+                           </source>
+                        </Media>
+                     </media>
+                  </MediaPlayer>
+               </mediaPlayer>
+            </MediaView>
+            <ImageView fitHeight="130.0" fitWidth="200.0" layoutX="35.0" layoutY="74.0">
+               <image>
+                  <Image url="@../../../../../../../../../OneDrive/Images/Captures%20d’écran/Capture%20d'écran%202024-01-02%20184224.png" />
+               </image>
+            </ImageView>
+            <Text fill="#fcfcfc" layoutX="63.0" layoutY="296.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Bienvenue">
+               <font>
+                  <Font name="Yu Gothic Regular" size="28.0" />
+               </font>
+            </Text>
+            <Text fill="WHITE" layoutX="16.0" layoutY="332.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Veuillez vous connecter pour accéder à votre portefeuille financier " wrappingWidth="238.40000820159906">
+               <font>
+                  <Font name="Yu Gothic UI Light" size="15.0" />
+               </font>
+            </Text>
+         </children></AnchorPane>
+      <Text fill="#443b7b" layoutX="295.0" layoutY="63.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Login ">
+         <font>
+            <Font name="Yu Gothic UI Regular" size="22.0" />
+         </font>
+      </Text>
+      <Text fill="#949494" layoutX="355.0" layoutY="62.0" strokeType="OUTSIDE" strokeWidth="0.0" text="/ Sign up">
+         <font>
+            <Font name="Yu Gothic UI Light" size="22.0" />
+         </font>
+      </Text>
    </children>
 </AnchorPane>
