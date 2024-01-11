@@ -4,8 +4,8 @@
 <?import javafx.scene.layout.*?>
 
 <AnchorPane prefHeight="200.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.partjava.CryptoOrderController">
-    <Label layoutX="50.0" layoutY="50.0" text="Enter Amount:" />
-    <TextField fx:id="amountTextField" layoutX="150.0" layoutY="50.0" />
+    <Label layoutX="50.0" layoutY="31.0" prefHeight="34.0" prefWidth="262.0" text="Enter Amount: &#10;(-1 to withdraw the existing order)" />
+    <TextField fx:id="amountTextField" layoutX="242.0" layoutY="25.0" prefHeight="42.0" prefWidth="123.0" />
 
     <Label layoutX="50.0" layoutY="80.0" text="Enter Password:" />
     <TextField fx:id="passwordField" layoutX="150.0" layoutY="80.0" />
