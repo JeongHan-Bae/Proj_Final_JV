@@ -9,6 +9,7 @@ import Tools.ShowAlert;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
 public class LoginController {
@@ -20,7 +21,7 @@ public class LoginController {
     private TextField usrNameField;
 
     @FXML
-    private TextField pwField;
+    private PasswordField pwField;
 
     @FXML
     private void connexionClick(){
