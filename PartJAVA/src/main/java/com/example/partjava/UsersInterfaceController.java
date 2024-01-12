@@ -74,7 +74,7 @@ public class UsersInterfaceController {
     // Method to update the infoTextArea with UserObj information
     public void updateInfoTextArea() {
         String userObjInfo = "User: " + UserObj.username +
-                "\nMr./Ms. " + UserObj.first_name + " " + UserObj.family_name.toUpperCase() +
+                "\n" + UserObj.first_name + " " + UserObj.family_name.toUpperCase() +
                 "\nTelephone: " + UserObj.telephone +
                 "\ne-mail: " + UserObj.e_mail +
                 "\n\tCurrency: " + UserObj.account.currency +
