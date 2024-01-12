@@ -1,15 +1,85 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="550.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.partjava.LoginController">
-   <Label fx:id="alertLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="55.0" layoutY="51.0" prefHeight="18.0" prefWidth="433.0" textFill="#fa0101" />
-   <Text layoutX="117.0" layoutY="94.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Login (username) :" />
-   <TextField fx:id="usrNameField" layoutX="245.0" layoutY="76.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="200.0" />
-   <Text layoutX="117.0" layoutY="146.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Password" />
-   <TextField fx:id="pwField" layoutX="245.0" layoutY="129.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="200.0" />
-   <Button fx:id="connectButton" layoutX="135.0" layoutY="209.0" mnemonicParsing="false" onAction="#connexionClick" text="&lt; Connect" />
-   <Button fx:id="newAccButton" layoutX="272.0" layoutY="209.0" mnemonicParsing="false" onAction="#createNewAcc" text="&lt; New Account" />
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="450.0"
+            prefWidth="700.0" style="-fx-background-color: #F5F5F5;" xmlns="http://javafx.com/javafx/17.0.2-ea"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.partjava.LoginController">
+   <Text fill="DIMGRAY" layoutX="368.0" layoutY="179.0" strokeType="OUTSIDE" strokeWidth="0.0"
+         text="Nom d'utilisateur ">
+      <font>
+         <Font name="Yu Gothic Light" size="23.0"/>
+      </font>
+   </Text>
+   <TextField fx:id="usrNameField" layoutX="368.0" layoutY="192.0" maxHeight="-Infinity" maxWidth="-Infinity"
+              minHeight="-Infinity" minWidth="-Infinity" prefWidth="200.0" style="-fx-background-radius: 20;">
+      <effect>
+         <Bloom threshold="1.0"/>
+      </effect>
+   </TextField>
+   <Text fill="#696969" layoutX="368.0" layoutY="264.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Mot de passe ">
+      <font>
+         <Font name="Yu Gothic Light" size="23.0"/>
+      </font>
+   </Text>
+   <PasswordField fx:id="pwField" accessibleRole="PASSWORD_FIELD" layoutX="368.0" layoutY="280.0" maxHeight="-Infinity"
+                  maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="200.0"
+                  style="-fx-background-radius: 20;">
+      <cursor>
+         <Cursor fx:constant="DEFAULT"/>
+      </cursor>
+      <effect>
+         <Bloom threshold="1.0"/>
+      </effect>
+   </PasswordField>
+   <Button fx:id="connectButton" alignment="CENTER" contentDisplay="CENTER" layoutX="325.0" layoutY="356.0"
+           maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false"
+           onAction="#connexionClick" prefHeight="31.0" prefWidth="118.0"
+           style="-fx-background-color: #443B7B; -fx-background-radius: 20;" text="Se connecter " textFill="#f7f7f7">
+      <font>
+         <Font name="Yu Gothic UI Regular" size="15.0"/>
+      </font>
+   </Button>
+   <Button fx:id="newAccButton" layoutX="455.0" layoutY="360.0" mnemonicParsing="false" onAction="#createNewAcc"
+           style="-fx-border-color: transparent; -fx-background-color: transparent; -fx-border-width: 0;"
+           text="Vous n'avez pas de compte ?" textFill="#443b7b">
+      <font>
+         <Font name="Yu Gothic Regular" size="13.0"/>
+      </font>
+   </Button>
+   <AnchorPane layoutY="-16.0" prefHeight="468.0" prefWidth="270.0" style="-fx-background-color: #443b7b;">
+      <ImageView fitHeight="124.0" fitWidth="200.0">
+         <layoutX>35.0</layoutX>
+         <layoutY>81.0</layoutY>
+         <Image url="@Wallet.png"/>
+      </ImageView>
+
+      <Text fill="#fcfcfc" layoutX="63.0" layoutY="296.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Bienvenue">
+         <font>
+            <Font name="Yu Gothic Regular" size="28.0"/>
+         </font>
+      </Text>
+      <Text fill="WHITE" layoutX="16.0" layoutY="332.0" strokeType="OUTSIDE" strokeWidth="0.0"
+            text="Veuillez vous connecter pour accéder à votre portefeuille financier "
+            wrappingWidth="238.40000820159906">
+         <font>
+            <Font name="Yu Gothic UI Light" size="15.0"/>
+         </font>
+      </Text>
+   </AnchorPane>
+   <Text fill="#443b7b" layoutX="295.0" layoutY="63.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Login ">
+      <font>
+         <Font name="Yu Gothic UI Regular" size="22.0"/>
+      </font>
+   </Text>
+   <Text fill="#949494" layoutX="355.0" layoutY="62.0" strokeType="OUTSIDE" strokeWidth="0.0" text="/ Sign up">
+      <font>
+         <Font name="Yu Gothic UI Light" size="22.0"/>
+      </font>
+   </Text>
 </AnchorPane>
