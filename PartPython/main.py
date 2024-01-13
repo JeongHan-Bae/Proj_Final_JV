@@ -1,6 +1,8 @@
 import json
 from datetime import datetime, timedelta
+from time import sleep
 from random import randint
+import socket
 from typing import Dict, Any, Tuple, Set, List, Union
 
 # Constants
@@ -57,14 +59,19 @@ def read_global_json(file_path: str) -> Dict[str, Any]:
     Returns:
     - A dictionary containing global data.
     """
-    try:
-        with open(file_path, 'r') as file:
-            return json.load(file)
-    except FileNotFoundError:
-        # File doesn't exist, initialize and then read again
-        initialize_global_json(file_path)
-        with open(file_path, 'r') as file:
-            return json.load(file)
+    while True:
+        try:
+            with open(file_path, 'r') as file:
+                return json.load(file)
+        except FileNotFoundError:
+            # File doesn't exist, initialize and then read again
+            initialize_global_json(file_path)
+            with open(file_path, 'r') as file:
+                return json.load(file)
+        except json.JSONDecodeError:
+            # File occupied
+            sleep(0.5)
+            # wait until able to process
 
 
 def write_global_json(file_path: str, data: Dict[str, Any]) -> None:
@@ -208,15 +215,29 @@ def process_data(begin: datetime, end: datetime,
             if begin.strftime(DATE_FORMAT) == date_str:
                 curr_data_map[company]: float = value
 
-        # Add current data map to dataMap for the current date
-        data_map[begin.strftime(DATE_FORMAT)]: Dict[str, float] = curr_data_map
+        # Copy current data map to dataMap for the current date
+        data_map[begin.strftime(DATE_FORMAT)]: Dict[str, float] = dict(curr_data_map)
 
         # Move to the next date
         begin += timedelta(days=1)
 
+        # Update global variables
+        global globalData
+        globalData["coinMap"] = coin_map
+        globalData["currDataMap"] = curr_data_map
+        globalData["dataMap"] = data_map
+        globalData["coin"] = curr_coin
+
 
 if __name__ == "__main__":
     jsonFilePath = JSON_FILE_PATH
+
+    # Create a socket connection
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_socket.connect(('localhost', 12345))
+
+    # Send "save" to the socket, to update the local base with current server data
+    server_socket.sendall(b'save')
 
     # Initialize or read global data
     globalData: Dict[str, Any] = read_global_json(jsonFilePath)
@@ -236,5 +257,11 @@ if __name__ == "__main__":
     # Perform the main processing
     process_data(beginDate, endDate, coinMap, coin, dataMap, currDataMap, participationSet)
 
-    # Save the modified data back to the file
+    # Update the local base with processed data
     write_global_json(jsonFilePath, globalData)
+
+    # Send "read" to the socket, to update the server data with current local base
+    server_socket.sendall(b'read')
+
+    # Close the socket connection
+    server_socket.close()
