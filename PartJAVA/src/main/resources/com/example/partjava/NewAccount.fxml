@@ -5,64 +5,86 @@
 <?import javafx.scene.shape.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="427.0" prefWidth="550.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.partjava.NewAccountController">
-   <children>
-      <Text layoutX="63.0" layoutY="79.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Civilité*">
-         <font>
-            <Font name="Yu Gothic UI Semibold" size="12.0" />
-         </font></Text>
-      
-      <TextField fx:id="usernameField" layoutX="287.0" layoutY="90.0" prefWidth="200.0" style="-fx-background-radius: 20; -fx-border-color: #443B7B; -fx-border-radius: 20;" />
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="427.0"
+            prefWidth="550.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/17.0.2-ea"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.partjava.NewAccountController">
+   <Text layoutX="63.0" layoutY="79.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Civilité*">
+      <font>
+         <Font name="Yu Gothic UI Semibold" size="12.0"/>
+      </font>
+   </Text>
 
-      <Text layoutX="61.0" layoutY="137.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Prénom*">
-         <font>
-            <Font name="Yu Gothic UI Semibold" size="12.0" />
-         </font></Text>
-      <TextField fx:id="firstNameField" layoutX="59.0" layoutY="150.0" prefWidth="200.0" style="-fx-background-radius: 20; -fx-border-color: #443B7B; -fx-border-radius: 20;" />
+   <TextField fx:id="usernameField" layoutX="287.0" layoutY="90.0" prefWidth="200.0"
+              style="-fx-background-radius: 20; -fx-border-color: #443B7B; -fx-border-radius: 20;"/>
 
-      <Text layoutX="287.0" layoutY="137.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Nom*">
-         <font>
-            <Font name="Yu Gothic UI Semibold" size="12.0" />
-         </font></Text>
-      <TextField fx:id="familyNameField" layoutX="287.0" layoutY="150.0" prefWidth="200.0" style="-fx-background-radius: 20; -fx-border-color: #443B7B; -fx-border-radius: 20;" />
+   <Text layoutX="61.0" layoutY="137.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Prénom*">
+      <font>
+         <Font name="Yu Gothic UI Semibold" size="12.0"/>
+      </font>
+   </Text>
+   <TextField fx:id="firstNameField" layoutX="59.0" layoutY="150.0" prefWidth="200.0"
+              style="-fx-background-radius: 20; -fx-border-color: #443B7B; -fx-border-radius: 20;"/>
 
-      <Text layoutX="287.0" layoutY="201.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Téléphone*">
-         <font>
-            <Font name="Yu Gothic UI Semibold" size="12.0" />
-         </font></Text>
-      <TextField fx:id="telephoneField" layoutX="287.0" layoutY="214.0" prefWidth="200.0" style="-fx-background-radius: 20; -fx-border-color: #443B7B; -fx-border-radius: 20;" />
+   <Text layoutX="287.0" layoutY="137.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Nom*">
+      <font>
+         <Font name="Yu Gothic UI Semibold" size="12.0"/>
+      </font>
+   </Text>
+   <TextField fx:id="familyNameField" layoutX="287.0" layoutY="150.0" prefWidth="200.0"
+              style="-fx-background-radius: 20; -fx-border-color: #443B7B; -fx-border-radius: 20;"/>
 
-      <Text layoutX="65.0" layoutY="201.0" strokeType="OUTSIDE" strokeWidth="0.0" text="E-mail*">
-         <font>
-            <Font name="Yu Gothic UI Semibold" size="12.0" />
-         </font></Text>
-      <TextField fx:id="emailField" layoutX="59.0" layoutY="214.0" prefWidth="200.0" style="-fx-background-radius: 20; -fx-border-color: #443B7B; -fx-border-radius: 20;" />
+   <Text layoutX="287.0" layoutY="201.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Téléphone*">
+      <font>
+         <Font name="Yu Gothic UI Semibold" size="12.0"/>
+      </font>
+   </Text>
+   <TextField fx:id="telephoneField" layoutX="287.0" layoutY="214.0" prefWidth="200.0"
+              style="-fx-background-radius: 20; -fx-border-color: #443B7B; -fx-border-radius: 20;"/>
 
-      <Text layoutX="65.0" layoutY="264.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Mot de passe*">
-         <font>
-            <Font name="Yu Gothic UI Semibold" size="12.0" />
-         </font></Text>
-      <PasswordField fx:id="passwordField" accessibleRole="PASSWORD_FIELD" layoutX="59.0" layoutY="275.0" prefWidth="200.0" style="-fx-background-radius: 20; -fx-border-color: #443B7B; -fx-border-radius: 20;" />
+   <Text layoutX="65.0" layoutY="201.0" strokeType="OUTSIDE" strokeWidth="0.0" text="E-mail*">
+      <font>
+         <Font name="Yu Gothic UI Semibold" size="12.0"/>
+      </font>
+   </Text>
+   <TextField fx:id="emailField" layoutX="59.0" layoutY="214.0" prefWidth="200.0"
+              style="-fx-background-radius: 20; -fx-border-color: #443B7B; -fx-border-radius: 20;"/>
 
-      <Text layoutX="287.0" layoutY="264.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Confirmer mot de passe*">
-         <font>
-            <Font name="Yu Gothic UI Semibold" size="12.0" />
-         </font></Text>
-      <PasswordField fx:id="repeatPasswordField" accessibleRole="PASSWORD_FIELD" layoutX="285.0" layoutY="275.0" prefWidth="200.0" style="-fx-background-radius: 20; -fx-border-color: #443B7B; -fx-border-radius: 20;" />
+   <Text layoutX="65.0" layoutY="264.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Mot de passe*">
+      <font>
+         <Font name="Yu Gothic UI Semibold" size="12.0"/>
+      </font>
+   </Text>
+   <PasswordField fx:id="passwordField" accessibleRole="PASSWORD_FIELD" layoutX="59.0" layoutY="275.0" prefWidth="200.0"
+                  style="-fx-background-radius: 20; -fx-border-color: #443B7B; -fx-border-radius: 20;"/>
 
-      <Button fx:id="createButton" layoutX="114.0" layoutY="362.0" mnemonicParsing="false" onAction="#onCreateButtonClicked" prefHeight="27.0" prefWidth="107.0" style="-fx-background-radius: 20; -fx-background-color: #443B7B;" text="S'inscrire" textFill="WHITE" />
-      <Button fx:id="clearButton" layoutX="326.0" layoutY="363.0" mnemonicParsing="false" onAction="#onClearButtonClicked" prefHeight="27.0" prefWidth="116.0" style="-fx-background-radius: 20; -fx-background-color: white; -fx-border-color: #443B7B; -fx-border-radius: 20;" text="Effacer" textFill="#443b7b" />
-      <Text layoutX="288.0" layoutY="79.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Nom d'utilisateur*">
-         <font>
-            <Font name="Yu Gothic UI Semibold" size="13.0" />
-         </font>
-      </Text>
-      <ChoiceBox fx:id="civilityField" layoutX="59.0" layoutY="90.0" prefHeight="26.0" prefWidth="200.0" style="-fx-background-radius: 20; -fx-background-color: white; -fx-border-color: #443B7B; -fx-border-radius: 20;" />
-      <Text fill="#443b7b" layoutX="62.0" layoutY="35.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Créer un compte">
-         <font>
-            <Font name="Yu Gothic Bold" size="22.0" />
-         </font>
-      </Text>
-      <Line endX="74.19999694824219" endY="-3.814697265625E-6" layoutX="165.0" layoutY="43.0" startX="-100.0" stroke="#443b7b" strokeWidth="2.0" />
-   </children>
+   <Text layoutX="287.0" layoutY="264.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Confirmer mot de passe*">
+      <font>
+         <Font name="Yu Gothic UI Semibold" size="12.0"/>
+      </font>
+   </Text>
+   <PasswordField fx:id="repeatPasswordField" accessibleRole="PASSWORD_FIELD" layoutX="285.0" layoutY="275.0"
+                  prefWidth="200.0"
+                  style="-fx-background-radius: 20; -fx-border-color: #443B7B; -fx-border-radius: 20;"/>
+
+   <Button fx:id="createButton" layoutX="114.0" layoutY="362.0" mnemonicParsing="false"
+           onAction="#onCreateButtonClicked" prefHeight="27.0" prefWidth="107.0"
+           style="-fx-background-radius: 20; -fx-background-color: #443B7B;" text="S'inscrire" textFill="WHITE"/>
+   <Button fx:id="clearButton" layoutX="326.0" layoutY="363.0" mnemonicParsing="false" onAction="#onClearButtonClicked"
+           prefHeight="27.0" prefWidth="116.0"
+           style="-fx-background-radius: 20; -fx-background-color: white; -fx-border-color: #443B7B; -fx-border-radius: 20;"
+           text="Effacer" textFill="#443b7b"/>
+   <Text layoutX="288.0" layoutY="79.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Nom d'utilisateur*">
+      <font>
+         <Font name="Yu Gothic UI Semibold" size="13.0"/>
+      </font>
+   </Text>
+   <ChoiceBox fx:id="civilityField" layoutX="59.0" layoutY="90.0" prefHeight="26.0" prefWidth="200.0"
+              style="-fx-background-radius: 20; -fx-background-color: white; -fx-border-color: #443B7B; -fx-border-radius: 20;"/>
+   <Text fill="#443b7b" layoutX="62.0" layoutY="35.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Créer un compte">
+      <font>
+         <Font name="Yu Gothic Bold" size="22.0"/>
+      </font>
+   </Text>
+   <Line endX="74.19999694824219" endY="-3.814697265625E-6" layoutX="165.0" layoutY="43.0" startX="-100.0"
+         stroke="#443b7b" strokeWidth="2.0"/>
 </AnchorPane>
