@@ -53,6 +53,11 @@ public class JavaClient {
         }
     }
 
+    public void send(String message) {
+        output.println(message);
+        output.flush();
+    }
+
     public void close() {
         try {
             output.close();
