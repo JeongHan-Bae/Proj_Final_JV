@@ -11,8 +11,11 @@ public class Investment {
     // constructor
     public Investment(String investInfos) {
         investMap = new HashMap<>();
-        String[] investments = investInfos.split(",");
         coins = 0.0F;
+        if (investInfos.isEmpty()){
+            return;
+        }
+        String[] investments = investInfos.split(",");
 
         for (String investment : investments) {
             String[] parts = investment.trim().split(" ");

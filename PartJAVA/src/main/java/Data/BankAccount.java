@@ -16,8 +16,12 @@ public class BankAccount {
         this.deposit = Float.parseFloat(volume[1]);
         this.debt = Float.parseFloat(volume[2]);
 
-        // Process the second part for investment information
-        String investInfos = parts[1];
+        // Process the second part for investment information if it exists
+        String investInfos = "";
+        if (parts.length > 1) {
+            investInfos = parts[1];
+        }
+
         this.investment = new Investment(investInfos);
     }
 
