@@ -3,6 +3,8 @@
 #include <unordered_map>
 #include <rapidjson/document.h>
 #include <rapidjson/writer.h>
+#include <rapidjson/stringbuffer.h>
+#include <rapidjson/prettywriter.h>
 #include <winsock2.h>
 #include <thread>
 #include <vector>
@@ -577,13 +579,13 @@ bool sellCoins(const std::string& infos, Document& DataBase, Document& Global, c
                std::to_string(DataBase[user.c_str()]["curr"]["currency"].GetDouble()) + '\n';
 
     if(DataBase[client.c_str()]["curr"]["investment"].HasMember("coin")){
-        double clientCoins = DataBase[client.c_str()]["curr"]["investment"]["coins"].GetDouble();
+        double clientCoins = DataBase[client.c_str()]["curr"]["investment"]["coin"].GetDouble();
         clientCoins += coinAmount;
-        DataBase[client.c_str()]["curr"]["investment"]["coins"].SetDouble(clientCoins);
+        DataBase[client.c_str()]["curr"]["investment"]["coin"].SetDouble(clientCoins);
     } else {
         Value coinAmountValue;
         coinAmountValue.SetDouble(coinAmount);
-        DataBase[client.c_str()]["curr"]["investment"].AddMember("coins", coinAmountValue, DataBase.GetAllocator());
+        DataBase[client.c_str()]["curr"]["investment"].AddMember("coin", coinAmountValue, DataBase.GetAllocator());
     }
     Global["buyCoins"].RemoveMember(client.c_str());
 
@@ -616,14 +618,15 @@ bool buyCoins(const std::string& infos, Document& DataBase, Document& Global, co
         response = "Client doesn't exist\n";
         return false;
     }
-    if(!Global["sellCoins"].HasMember(client.c_str())){
+
+    if(!Global["saleCoins"].HasMember(client.c_str())){
         response = "Client doesn't exist\n";
         return false;
     }
 
 
     double currency = DataBase[user.c_str()]["curr"]["currency"].GetDouble();
-    double coinAmount = Global["sellCoins"][client.c_str()].GetDouble();
+    double coinAmount = Global["saleCoins"][client.c_str()].GetDouble();
     double coinVal = Global["coin"].GetDouble();
     double price = coinAmount * coinVal;
 
@@ -635,13 +638,13 @@ bool buyCoins(const std::string& infos, Document& DataBase, Document& Global, co
     DataBase[user.c_str()]["curr"]["currency"].SetDouble(currency);
 
     if(DataBase[user.c_str()]["curr"]["investment"].HasMember("coin")){
-        double userCoins = DataBase[client.c_str()]["curr"]["investment"]["coins"].GetDouble();
+        double userCoins = DataBase[user.c_str()]["curr"]["investment"]["coin"].GetDouble();
         userCoins += coinAmount;
-        DataBase[user.c_str()]["curr"]["investment"]["coins"].SetDouble(userCoins);
+        DataBase[user.c_str()]["curr"]["investment"]["coin"].SetDouble(userCoins);
     } else {
         Value coinAmountValue;
         coinAmountValue.SetDouble(coinAmount);
-        DataBase[user.c_str()]["curr"]["investment"].AddMember("coins", coinAmountValue, DataBase.GetAllocator());
+        DataBase[user.c_str()]["curr"]["investment"].AddMember("coin", coinAmountValue, DataBase.GetAllocator());
     }
 
     double clientCurrency = DataBase[client.c_str()]["curr"]["currency"].GetDouble();
@@ -653,7 +656,7 @@ bool buyCoins(const std::string& infos, Document& DataBase, Document& Global, co
                std::to_string(DataBase[user.c_str()]["curr"]["currency"].GetDouble()) + '\n';
 
 
-    Global["sellCoins"].RemoveMember(client.c_str());
+    Global["saleCoins"].RemoveMember(client.c_str());
 
     update(user, DataBase);
     update(client, DataBase);
@@ -710,17 +713,17 @@ bool pushOrder(const std::string& infos, Document& DataBase, Document& Global, c
     } else if (type == "Sale") {
         double coins = 0.0;
         if(DataBase[user.c_str()]["curr"]["investment"].HasMember("coin")){
-            coins = DataBase[user.c_str()]["curr"]["investment"].GetDouble();
+            coins = DataBase[user.c_str()]["curr"]["investment"]["coin"].GetDouble();
         }
         if (amount > coins) {
             response = "Not enough Coins\n";
             return false;
         }
-        if (Global["sellCoins"].HasMember(user.c_str())) {
+        if (Global["saleCoins"].HasMember(user.c_str())) {
             response = "Duplicate\n";
             return false;
         } else {
-            Global["sellCoins"].AddMember(Value(user.c_str(), Global.GetAllocator()).Move(), amount, Global.GetAllocator());
+            Global["saleCoins"].AddMember(Value(user.c_str(), DataBase.GetAllocator()).Move(), amount, DataBase.GetAllocator());
             coins -= amount;
             if (coins == 0.0){
                 DataBase[user.c_str()]["curr"]["investment"].RemoveMember("coin");
@@ -729,19 +732,19 @@ bool pushOrder(const std::string& infos, Document& DataBase, Document& Global, c
             }
         }
     } else if (type == "~Sale") {
-        if (!Global["sellCoins"].HasMember(user.c_str())) {
+        if (!Global["saleCoins"].HasMember(user.c_str())) {
             response = "Empty\n";
             return false;
         }
-        amount = Global["sellCoins"][user.c_str()].GetDouble();
-        Global["sellCoins"].EraseMember(user.c_str());
+        amount = Global["saleCoins"][user.c_str()].GetDouble();
+        Global["saleCoins"].EraseMember(user.c_str());
 
         if(DataBase[user.c_str()]["curr"]["investment"].HasMember("coin")){
-            double coins = DataBase[user.c_str()]["curr"]["investment"].GetDouble();
+            double coins = DataBase[user.c_str()]["curr"]["investment"]["coin"].GetDouble();
             coins += amount;
             DataBase[user.c_str()]["curr"]["investment"]["coin"].SetDouble(coins);
         } else {
-            DataBase[user.c_str()]["curr"]["investment"].AddMember("coins", amount, DataBase.GetAllocator());
+            DataBase[user.c_str()]["curr"]["investment"].AddMember("coin", amount, DataBase.GetAllocator());
         }
     }
 
@@ -749,6 +752,42 @@ bool pushOrder(const std::string& infos, Document& DataBase, Document& Global, c
     response = "1\n";
 
     return true;
+}
+
+// Helper function to read JSON data from a file and parse it
+bool readAndParseJson(const char* filePath, Document& document) {
+    std::ifstream file(filePath);
+    if (!file.is_open()) {
+        std::cerr << "Error opening file: " << filePath << std::endl;
+        return false;
+    }
+
+    std::string jsonString((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+    document.Parse(jsonString.c_str());
+
+    if (document.HasParseError()) {
+        std::cerr << "Error parsing JSON from file: " << filePath << std::endl;
+        return false;
+    }
+
+    return true;
+}
+
+// Helper function to save JSON data to a file with optional indentation
+void saveJsonToFile(const char* filePath, const Document& jsonDoc, int indent = 0) {
+    StringBuffer buffer;
+    PrettyWriter<StringBuffer> writer(buffer);
+
+    if (indent > 0) {
+        writer.SetIndent(' ', indent);
+    }
+
+    jsonDoc.Accept(writer);
+
+    std::ofstream file(filePath);
+    file << buffer.GetString();
+    file.close();
+    // std::cout << buffer.GetString() << '\n';
 }
 
 
@@ -766,40 +805,19 @@ void HandleClient(SOCKET clientSocket, Document& logIn, Document& dataBase, Docu
         buffer[bytesRead] = '\0';
         std::cout << "Received command from client: " << buffer << std::endl;  // Add this line for debugging
 
-        if (strncmp(buffer, "exit", strlen("exit")) == 0) {
-            std::cout << "Received exit command. Closing connection." << std::endl;
-            StringBuffer bufferDB;
-            Writer<StringBuffer> writerDB(bufferDB);
-            dataBase.Accept(writerDB);
+        if (strncmp(buffer, "read", strlen("read")) == 0) {
+            // Read the data from files and send it to the client
+            readAndParseJson("../../StoreJSON/DB.json", dataBase);
+            readAndParseJson("../../StoreJSON/Login.json", logIn);
+            readAndParseJson("../../StoreJSON/Global.json", global);
+            std::cout << "Successfully read in." << std::endl;
+        } else if (strncmp(buffer, "save", strlen("save")) == 0) {
+            // Save the data to files with indentation
+            saveJsonToFile("../../StoreJSON/DB.json", dataBase, 2);
+            saveJsonToFile("../../StoreJSON/Login.json", logIn, 2);
+            saveJsonToFile("../../StoreJSON/Global.json", global, 2);
 
-            StringBuffer bufferLOGIN;
-            Writer<StringBuffer> writerLOGIN(bufferLOGIN);
-            logIn.Accept(writerLOGIN);
-
-            StringBuffer bufferGLOBAL;
-            Writer<StringBuffer> writerGLOBAL(bufferGLOBAL);
-            global.Accept(writerGLOBAL);
-
-            std::ofstream fileDB("../../StoreJSON/DB.json");
-            fileDB << bufferDB.GetString();
-            fileDB.close();
-            std::cout <<  bufferDB.GetString() <<'\n';
-
-            std::ofstream fileLOGIN("../../StoreJSON/Login.json");
-            fileLOGIN << bufferLOGIN.GetString();
-            fileLOGIN.close();
-            std::cout <<  bufferLOGIN.GetString() <<'\n';
-
-            std::ofstream fileGLOBAL("../../StoreJSON/Global.json");
-            fileGLOBAL << bufferGLOBAL.GetString();
-            fileGLOBAL.close();
-            std::cout <<  bufferGLOBAL.GetString() <<'\n';
-
-            std::lock_guard<std::mutex> lock(launchMutex);  // Lock the mutex
-            launch = false;
-            std::this_thread::sleep_for(std::chrono::milliseconds(1000)); // Adjust the delay as needed
-            closesocket(clientSocket);
-            break;
+            std::cout << "Data saved successfully." << std::endl;
         } else {
             // Process other commands
             std::string command(buffer);
@@ -880,25 +898,17 @@ void HandleClient(SOCKET clientSocket, Document& logIn, Document& dataBase, Docu
 
 int main() {
     launch = true;
-    // Read JSON from a fileDB
-    std::ifstream readFileDB("../../StoreJSON/DB.json");
-    std::string jsonStrDB((std::istreambuf_iterator<char>(readFileDB)), std::istreambuf_iterator<char>());
+    Document dataBase, logIn, global;
 
-    std::ifstream readFileLOGIN("../../StoreJSON/Login.json");
-    std::string jsonStrLOGIN((std::istreambuf_iterator<char>(readFileLOGIN)), std::istreambuf_iterator<char>());
+    if (readAndParseJson("../../StoreJSON/DB.json", dataBase) &&
+        readAndParseJson("../../StoreJSON/Login.json", logIn) &&
+        readAndParseJson("../../StoreJSON/Global.json", global)) {
 
-    std::ifstream readFileGLOBAL("../../StoreJSON/Global.json");
-    std::string jsonStrGLOBAL((std::istreambuf_iterator<char>(readFileGLOBAL)), std::istreambuf_iterator<char>());
+        std::cout << "Successfully read and parsed JSON data." << std::endl;
 
-    // Parse JSON
-    Document dataBase;
-    dataBase.Parse(jsonStrDB.c_str());
-
-    Document logIn;
-    logIn.Parse(jsonStrLOGIN.c_str());
-
-    Document global;
-    global.Parse(jsonStrGLOBAL.c_str());
+    } else {
+        std::cerr << "Failed to read or parse JSON data." << std::endl;
+    }
 
     WSADATA wsaData;
     if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) {
