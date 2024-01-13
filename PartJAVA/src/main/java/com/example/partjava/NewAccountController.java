@@ -69,7 +69,7 @@ public class NewAccountController {
         int hashedPassword = Password2Hash.hashPassword(password);
 
         // Construct registerInfo string
-        String registerInfo = "createNewAcc:" + username + " " + firstName + " " + familyName + " " + telephone + " " + email + " " + hashedPassword;
+        String registerInfo = "createNewAcc:" + username + " " + hashedPassword + " " + firstName + " " + familyName + " " + telephone + " " + email;
 
         JavaClient client = new JavaClient();
         // Send the registration info to the server
