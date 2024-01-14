@@ -3,12 +3,18 @@ package com.example.partjava;
 import Tools.JavaClient;
 import Tools.Password2Hash;
 import Tools.ShowAlert;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
 public class NewAccountController {
 
+    @FXML
+    public ChoiceBox<String> civilityField;
     @FXML
     private TextField usernameField;
 
@@ -25,27 +31,56 @@ public class NewAccountController {
     private TextField emailField;
 
     @FXML
-    private TextField passwordField;
+    private PasswordField passwordField;
 
     @FXML
-    private TextField repeatPasswordField;
+    private PasswordField repeatPasswordField;
 
     public Button createButton;
 
     public Button clearButton;
+
+    @FXML
+    private void initialize() {
+        // Initialize civilityField with choices
+        ObservableList<String> civilityOptions = FXCollections.observableArrayList("Monsieur", "Madame", " - - ");
+        civilityField.setItems(civilityOptions);
+
+    }
 
 
     @FXML
     private void onCreateButtonClicked() {
         // check every field to ensure the account infos are valid
         String username = usernameField.getText().trim();
-        String firstName = firstNameField.getText().replace(" ", "<");
+        String civility = civilityField.getValue();
+
+        if (username.isEmpty() || civility == null || civility.isEmpty()) {
+            ShowAlert.Warning("Error", "Please fill in all required fields.");
+            return;
+        }
+
+        String firstName;
+
+        // Check civility and format firstName accordingly
+        if ("Monsieur".equals(civility)) {
+            firstName = "M.<" + firstNameField.getText().replace(" ", "<");
+        } else if ("Madame".equals(civility)) {
+            firstName = "Mme.<" + firstNameField.getText().replace(" ", "<");
+        } else {
+            firstName = firstNameField.getText().replace(" ", "<");
+        }
         String familyName = familyNameField.getText().replace(" ", "<");
         String telephone = telephoneField.getText().replace(" ", "");
         // As we use space to split the send infos, spaces in these fields should be replaced
         String email = emailField.getText().trim();
         String password = passwordField.getText();
         String repeatPassword = repeatPasswordField.getText();
+
+        if (familyName.isEmpty() || telephone.isEmpty() || email.isEmpty() || password.isEmpty() || repeatPassword.isEmpty()) {
+            ShowAlert.Warning("Error", "Please fill in all required fields.");
+            return;
+        }
 
         // As we use space to split the send infos, username with space should be invalid
         if (username.contains(" ")) {
@@ -91,6 +126,7 @@ public class NewAccountController {
 
     @FXML
     private void onClearButtonClicked() {
+        civilityField.setValue(null);
         usernameField.clear();
         firstNameField.clear();
         familyNameField.clear();
