@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="328.0" prefWidth="490.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.partjava.CryptoOrderController">
+    <Label layoutX="77.0" layoutY="150.0" prefHeight="18.0" prefWidth="62.0" text="Montant&#10;">
+      <font>
+         <Font name="Yu Gothic UI Semibold" size="12.0" />
+      </font></Label>
+    <TextField fx:id="amountTextField" layoutX="69.0" layoutY="172.0" prefHeight="27.0" prefWidth="141.0" style="-fx-background-radius: 20; -fx-border-color: #443B7B; -fx-border-radius: 20;" />
+
+    <Label layoutX="277.0" layoutY="151.0" text="Mot de passe ">
+      <font>
+         <Font name="Yu Gothic UI Semibold" size="12.0" />
+      </font></Label>
+    <TextField fx:id="passwordField" layoutX="268.0" layoutY="172.0" style="-fx-background-radius: 20; -fx-border-color: #443B7B; -fx-border-radius: 20;" />
+
+    <Button layoutX="126.0" layoutY="253.0" onAction="#sellOrder" style="-fx-background-color: #443B7B; -fx-background-radius: 20;" text="Vendre " textFill="WHITE" />
+    <Button layoutX="315.0" layoutY="253.0" onAction="#buyOrder" style="-fx-background-color: #443B7B; -fx-background-radius: 20;" text="Acheter" textFill="WHITE" />
+   <Label layoutX="69.0" layoutY="189.0" prefHeight="34.0" prefWidth="172.0" text="-1 to withdraw the existing order&#10;" textFill="#443b7b">
+      <font>
+         <Font name="Yu Gothic Light" size="10.0" />
+      </font>
+   </Label>
+   <Label layoutX="60.0" layoutY="89.0" prefHeight="34.0" prefWidth="395.0" text="Entrer le montant liquide que vous souhaitez vendre ou le montant &#10;de Coin que vous souhaitez acheter&#10;" textFill="#443b7b">
+      <font>
+         <Font name="Yu Gothic Regular" size="12.0" />
+      </font>
+   </Label>
+   <VBox alignment="CENTER" prefHeight="26.0" prefWidth="189.0" />
+   <Label alignment="CENTER" layoutX="41.0" layoutY="26.0" prefHeight="34.0" prefWidth="235.0" style="-fx-background-radius: 20; -fx-border-radius: 20; -fx-border-color: #443B7B; -fx-border-width: 2;" text="Effectuer une transaction" textFill="#443b7b">
+      <font>
+         <Font name="Yu Gothic Bold" size="14.0" />
+      </font>
+   </Label>
+</AnchorPane>
