@@ -2,14 +2,37 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="200.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.partjava.CryptoOrderController">
-    <Label layoutX="50.0" layoutY="31.0" prefHeight="34.0" prefWidth="262.0" text="Enter Amount: &#10;(-1 to withdraw the existing order)" />
-    <TextField fx:id="amountTextField" layoutX="242.0" layoutY="25.0" prefHeight="42.0" prefWidth="123.0" />
+<AnchorPane prefHeight="328.0" prefWidth="490.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.partjava.CryptoOrderController">
+    <Label layoutX="77.0" layoutY="150.0" prefHeight="18.0" prefWidth="62.0" text="Montant&#10;">
+        <font>
+            <Font name="Yu Gothic UI Semibold" size="12.0" />
+        </font></Label>
+    <TextField fx:id="amountTextField" layoutX="69.0" layoutY="172.0" prefHeight="27.0" prefWidth="141.0" style="-fx-background-radius: 20; -fx-border-color: #443B7B; -fx-border-radius: 20;" />
 
-    <Label layoutX="50.0" layoutY="80.0" text="Enter Password:" />
-    <TextField fx:id="passwordField" layoutX="150.0" layoutY="80.0" />
+    <Label layoutX="277.0" layoutY="151.0" text="Mot de passe ">
+        <font>
+            <Font name="Yu Gothic UI Semibold" size="12.0" />
+        </font></Label>
+    <PasswordField fx:id="passwordField" layoutX="268.0" layoutY="172.0" style="-fx-background-radius: 20; -fx-border-color: #443B7B; -fx-border-radius: 20;" />
 
-    <Button layoutX="50.0" layoutY="120.0" onAction="#sellOrder" text="Order Sale&#10;Register Liquid Amount" />
-    <Button layoutX="217.0" layoutY="120.0" onAction="#buyOrder" text="Order Purchase&#10;Register Coin Amount" />
+    <Button layoutX="73.0" layoutY="253.0" onAction="#sellOrder" style="-fx-background-color: #443B7B; -fx-background-radius: 20;" text="Commande à Vendre " textFill="WHITE" />
+    <Button layoutX="278.0" layoutY="253.0" onAction="#buyOrder" style="-fx-background-color: #443B7B; -fx-background-radius: 20;" text="Commande à Acheter" textFill="WHITE" />
+    <Label layoutX="69.0" layoutY="189.0" prefHeight="34.0" prefWidth="172.0" text="-1 pour retirer une commande&#10;" textFill="#443b7b">
+        <font>
+            <Font name="Yu Gothic Light" size="10.0" />
+        </font>
+    </Label>
+    <Label layoutX="60.0" layoutY="62.0" prefHeight="84.0" prefWidth="395.0" text="Entrer le montant de coin que vous souhaitez mettre à la vente ou&#10;le montant de liquide que vous souhaitez utiliser pour acheter des&#10;coins.&#10;" textFill="#443b7b">
+        <font>
+            <Font name="Yu Gothic Regular" size="12.0" />
+        </font>
+    </Label>
+    <VBox alignment="CENTER" prefHeight="26.0" prefWidth="189.0" />
+    <Label alignment="CENTER" layoutX="21.0" layoutY="26.0" prefHeight="34.0" prefWidth="235.0" style="-fx-background-radius: 20;" text="Effectuer une Commande" textFill="#443b7b">
+        <font>
+            <Font name="Yu Gothic Bold" size="14.0" />
+        </font>
+    </Label>
 </AnchorPane>
