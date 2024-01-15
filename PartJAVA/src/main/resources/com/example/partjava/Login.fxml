@@ -21,6 +21,9 @@
       <effect>
          <Bloom threshold="1.0" />
       </effect>
+      <font>
+         <Font size="13.0" />
+      </font>
    </TextField>
    <Text layoutX="368.0" layoutY="269.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Mot de passe ">
       <font>
@@ -34,6 +37,9 @@
       <effect>
          <Bloom threshold="1.0" />
       </effect>
+      <font>
+         <Font size="13.0" />
+      </font>
    </PasswordField>
    <Button fx:id="connectButton" alignment="CENTER" contentDisplay="CENTER" layoutX="325.0" layoutY="356.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#connexionClick" prefHeight="31.0" prefWidth="118.0" style="-fx-background-color: #443B7B; -fx-background-radius: 20;" text="Se connecter " textFill="#f7f7f7">
       <font>
