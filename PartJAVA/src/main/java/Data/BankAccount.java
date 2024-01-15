@@ -31,7 +31,7 @@ public class BankAccount {
                 "currency=" + currency +
                 ",\n deposit=" + deposit +
                 ",\n debt=" + debt +
-                ",\n investment=" + investment +
+                ",\n investment=\n" + investment +
                 '}';
     }
 }

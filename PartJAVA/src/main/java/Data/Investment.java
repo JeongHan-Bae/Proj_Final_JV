@@ -32,13 +32,13 @@ public class Investment {
 
     @Override
     public String toString() {
-        StringBuilder res = new StringBuilder("\n\t\tcoins: " + coins + "\n\t\t" +
+        StringBuilder res = new StringBuilder("Coins: " + coins + "\n" +
                 "Financial Products: ");
         for (Map.Entry<String, Float> entry : investMap.entrySet()) {
             String key = entry.getKey();
             Float value = entry.getValue();
 
-            res.append("\n\t\t\t").append(key).append(": ").append(value);
+            res.append("\n\t").append(key).append(": ").append(value);
         }
         return res.toString();
     }
