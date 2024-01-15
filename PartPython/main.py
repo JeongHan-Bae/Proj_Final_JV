@@ -239,6 +239,8 @@ if __name__ == "__main__":
     # Send "save" to the socket, to update the local base with current server data
     server_socket.sendall(b'save')
 
+    sleep(2)
+
     # Initialize or read global data
     globalData: Dict[str, Any] = read_global_json(jsonFilePath)
 
@@ -259,6 +261,8 @@ if __name__ == "__main__":
 
     # Update the local base with processed data
     write_global_json(jsonFilePath, globalData)
+
+    sleep(2)
 
     # Send "read" to the socket, to update the server data with current local base
     server_socket.sendall(b'read')

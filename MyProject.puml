@@ -1,0 +1,126 @@
+@startuml
+hide empty fields
+hide empty methods
+hide empty attributes
+
+package com.example.partjava {
+    class MyApplication {
+        +start(stage: Stage): void
+        +main(args: String[]): void
+    }
+
+    class SceneNavigator {
+        +openNewScene(fxmlFileName: String, title: String): void
+        +getToInterface(fxmlFileName: String, sourceButton: Button, title: String): void
+        +getToInterface(fxmlFileName: String, sourceButton: Button): void
+        -closeAllStagesExcept(targetStage: Stage): void
+    }
+
+    class xxController {
+        +onSomeButtonClick(): void
+    }
+    MyApplication --> xxController : calls
+    SceneNavigator <--> xxController : calls
+}
+
+package Tools {
+    class JavaClient {
+        +JavaClient(): void
+        +sendAndReceive(userInput: String): String
+        +send(message: String): void
+        +close(): void
+    }
+
+    class Admin {
+        +main(args: String[]): void
+        // for simulating administrator
+    }
+
+    class ChartGenerator {
+        +chartAccountData(): void
+        +chartGlobal(): void
+        +chartSelf(): void
+    }
+
+    class Password2Hash {
+        +hashPassword(password: String): int
+        +main(args: String[]): void
+    }
+
+    class ShowAlert {
+        +Information(title: String, message: String): void
+        +Warning(title: String, message: String): void
+        +Error(title: String, message: String): void
+    }
+    Admin --> JavaClient : calls
+}
+
+package Data {
+    class BankAccount {
+        +currency: float
+        +deposit: float
+        +debt: float
+        +investment: Investment
+        +BankAccount(bankAccountInfo: String)
+    }
+
+    class GlobalObj {
+        +initializeClass(globInfos: String): void
+        +toStringGlobalObj(): String
+    }
+
+    class Investment {
+        +coins: float
+        +investMap: Map<String, Float>
+        +Investment(investInfos: String)
+    }
+
+    class UserObj {
+        +username: String
+        +first_name: String
+        +family_name: String
+        +telephone: String
+        +e_mail: String
+    }
+    BankAccount -- Investment : has
+    BankAccount -- GlobalObj : has
+    UserObj -- BankAccount : owns
+}
+
+package DataTests {
+    class BankAccountTest {
+        +testBankAccountInitialization(): void
+        -getRandomFloat(): float
+    }
+
+    class GlobalObjTest {
+        +testInitializeClass(): void
+        +testToStringGlobalObj(): void
+    }
+
+    class InvestmentTest {
+        +testInitializeInvestmentWithCoin(): void
+        +testInitializeInvestmentWithoutCoin(): void
+        +testCompareInvestMap(): void
+        -getCompanyInvestments(random: Random): String
+    }
+
+    class UserObjTest {
+        +testUserObjInitialization(): void
+        -getRandomUsername(): String
+        -getRandomName(): String
+        -getRandomTelephone(): String
+        -getRandomEmail(): String
+    }
+}
+
+xxController --> Tools.ChartGenerator : calls
+xxController --|> Tools.JavaClient : uses
+xxController --> Tools.Password2Hash : calls
+xxController --> Tools.ShowAlert : calls
+xxController --|> Data.UserObj : uses
+xxController --|> Data.GlobalObj : uses
+
+
+
+@enduml

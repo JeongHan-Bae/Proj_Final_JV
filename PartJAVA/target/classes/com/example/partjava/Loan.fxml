@@ -1,23 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.2-ea"
-            xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.partjava.LoanController">
-    <Label layoutX="50.0" layoutY="50.0" text="Interest Rates"/>
-    <Label layoutX="50.0" layoutY="80.0" text="Yearly: 3.04%"/>
-    <Label layoutX="50.0" layoutY="110.0" text="Monthly: 0.25%"/>
+<?import javafx.scene.control.PasswordField?>
+<AnchorPane prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.partjava.LoanController">
+    <Label layoutX="50.0" layoutY="37.0" text="Taux d'intêret">
+        <font>
+            <Font name="Yu Gothic UI Semibold" size="14.0" />
+        </font></Label>
+    <Label layoutX="51.0" layoutY="69.0" text="Annuelle : 3.04%">
+        <font>
+            <Font name="Yu Gothic UI Semibold" size="12.0" />
+        </font></Label>
+    <Label layoutX="51.0" layoutY="91.0" text="Mensuelle : 0.25%">
+        <font>
+            <Font name="Yu Gothic UI Semibold" size="12.0" />
+        </font></Label>
 
-    <Label fx:id="currencyLabel" layoutX="50.0" layoutY="160.0" text="Currency: {UserObj.account.currency}"/>
-    <Label fx:id="debtLabel" layoutX="50.0" layoutY="190.0" text="Debt: {UserObj.account.debt}"/>
+    <Label fx:id="currencyLabel" layoutX="50.0" layoutY="138.0" text="Monnaie : {UserObj.account.currency}">
+        <font>
+            <Font name="Yu Gothic UI Semibold" size="12.0" />
+        </font></Label>
+    <Label fx:id="debtLabel" layoutX="50.0" layoutY="162.0" text="Dette : {UserObj.account.debt}">
+        <font>
+            <Font name="Yu Gothic UI Semibold" size="12.0" />
+        </font></Label>
 
-    <Label layoutX="50.0" layoutY="270.0" text="Loan Amount"/>
-    <TextField fx:id="loanAmountField" layoutX="200.0" layoutY="270.0"/>
+    <Label layoutX="246.0" layoutY="200.0" text="Montant du prêt">
+        <font>
+            <Font name="Yu Gothic UI Semibold" size="12.0" />
+        </font></Label>
+    <TextField fx:id="loanAmountField" layoutX="172.0" layoutY="224.0" prefHeight="25.0" prefWidth="229.0" style="-fx-border-color: #443B7B; -fx-background-radius: 20; -fx-border-radius: 20;" />
 
-    <Label layoutX="50.0" layoutY="300.0" text="Password"/>
-    <TextField fx:id="passwordField" layoutX="200.0" layoutY="300.0"/>
+    <Label layoutX="250.0" layoutY="268.0" text="Mot de passe">
+        <font>
+            <Font name="Yu Gothic UI Semibold" size="12.0" />
+        </font></Label>
+    <PasswordField fx:id="passwordField" layoutX="172.0" layoutY="291.0" prefHeight="25.0" prefWidth="229.0" style="-fx-border-color: #443B7B; -fx-background-radius: 20; -fx-border-radius: 20;" />
 
-    <Button layoutX="51.0" layoutY="346.0" onAction="#applyLoan" text="Apply"/>
-    <Button fx:id="returnButton" layoutX="200.0" layoutY="346.0" onAction="#onReturnButtonClick" text="Return"/>
+    <Button layoutX="134.0" layoutY="340.0" onAction="#applyLoan" prefHeight="33.0" prefWidth="118.0" style="-fx-background-color: #443B7B; -fx-background-radius: 20; -fx-border-radius: 20;" text="Appliquer" textFill="WHITE" />
+    <Button fx:id="returnButton" layoutX="319.0" layoutY="340.0" onAction="#onReturnButtonClick" prefHeight="33.0" prefWidth="118.0" style="-fx-background-color: white; -fx-background-radius: 20; -fx-border-color: #443B7B; -fx-border-radius: 20;" text="Retour" textFill="#443b7b" />
 </AnchorPane>
