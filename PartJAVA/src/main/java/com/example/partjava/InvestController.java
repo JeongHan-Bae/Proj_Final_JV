@@ -5,6 +5,7 @@ import Tools.*;
 import javafx.fxml.FXML;
 
 import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
 public class InvestController {
@@ -20,7 +21,7 @@ public class InvestController {
     private TextField amountField;
 
     @FXML
-    private TextField passwordField;
+    private PasswordField passwordField;
 
     @FXML
     public void initialize() {
@@ -33,11 +34,10 @@ public class InvestController {
         if (GlobalObj.currDataMap.containsKey(companyName)) {
             // Company found, show the price in a dialog
             Float stockPrice = GlobalObj.currDataMap.get(companyName);
-            ShowAlert.Information("Stock Price", "The price of one stock of " + companyName + " is: " + stockPrice);
+            ShowAlert.Information("Prix des actions", "Le prix d'une action de " + companyName + " est : " + stockPrice);
         } else {
             // Company not found, show an alert
-            ShowAlert.Warning("Company Not Found", "The company " + companyName + " was not found.");
-
+            ShowAlert.Warning("Société non trouvée", "La société " + companyName + " n'a pas été trouvée.");
         }
     }
 
@@ -63,9 +63,9 @@ public class InvestController {
                         String resInfo = client.sendAndReceive(operationInfo);
                         client.close();
                         if (resInfo.equals("Wrong Password")) {
-                            ShowAlert.Warning("Wrong Password", "The password entered is incorrect.");
+                            ShowAlert.Warning("Mot de passe incorrect", "Le mot de passe saisi est incorrect.");
                         } else if (resInfo.equals("Failed")) {
-                            ShowAlert.Warning("Transaction Failed", "The stock buying transaction failed.");
+                            ShowAlert.Warning("Transaction échouée", "La transaction d'achat d'actions a échoué.");
                         } else {
                             // Successful transaction, update UserObj.account.currency
                             UserObj.account.currency = Float.parseFloat(resInfo);
@@ -75,21 +75,20 @@ public class InvestController {
                             String accInfo = callBank.sendAndReceive("getBank:" + UserObj.username);
                             callBank.close();
                             updateBankAcc(accInfo);
-                            ShowAlert.Information("Transaction Successful", "Stocks bought successfully. Currency updated.");
+                            ShowAlert.Information("Transaction réussie", "Actions achetées avec succès. Devise mise à jour.");
                         }
 
-
                     } else {
-                        ShowAlert.Warning("Not Enough Money", "You do not have enough money to make this purchase.");
+                        ShowAlert.Warning("Fonds insuffisants", "Vous n'avez pas assez d'argent pour effectuer cet achat.");
                     }
                 } else {
-                    ShowAlert.Error("Error", "Invalid Amount Format. Please enter a valid positive amount.");
+                    ShowAlert.Error("Erreur", "Format de montant invalide. Veuillez entrer un montant positif valide.");
                 }
             } catch (NumberFormatException e) {
-                ShowAlert.Error("Error", "Invalid Amount Format. Please enter a valid number.");
+                ShowAlert.Error("Erreur", "Format de montant invalide. Veuillez entrer un nombre valide.");
             }
         } else {
-            ShowAlert.Warning("Company Not Found", "The company " + companyName + " was not found.");
+            ShowAlert.Warning("Société non trouvée", "La société " + companyName + " n'a pas été trouvée.");
         }
     }
 
@@ -115,9 +114,9 @@ public class InvestController {
                         client.close();
 
                         if (resInfo.equals("Wrong Password")) {
-                            ShowAlert.Warning("Wrong Password", "The password entered is incorrect.");
+                            ShowAlert.Warning("Mot de passe incorrect", "Le mot de passe saisi est incorrect.");
                         } else if (resInfo.equals("Failed")) {
-                            ShowAlert.Warning("Transaction Failed", "The stock selling transaction failed.");
+                            ShowAlert.Warning("Transaction échouée", "La transaction de vente d'actions a échoué.");
                         } else {
                             // Successful transaction, update UserObj.account.currency
                             UserObj.account.currency = Float.parseFloat(resInfo);
@@ -127,19 +126,19 @@ public class InvestController {
                             String accInfo = callBank.sendAndReceive("getBank:" + UserObj.username);
                             callBank.close();
                             updateBankAcc(accInfo);
-                            ShowAlert.Information("Transaction Successful", "Stocks sold successfully. Currency updated.");
+                            ShowAlert.Information("Transaction réussie", "Actions vendues avec succès. Devise mise à jour.");
                         }
                     } else {
-                        ShowAlert.Warning("Not Enough Stocks", "You do not have enough stocks to make this sale.");
+                        ShowAlert.Warning("Stocks insuffisants", "Vous n'avez pas assez de stocks pour effectuer cette vente.");
                     }
                 } else {
-                    ShowAlert.Error("Error", "Invalid Amount Format. Please enter a valid positive amount.");
+                    ShowAlert.Error("Erreur", "Format de montant invalide. Veuillez entrer un montant positif valide.");
                 }
             } catch (NumberFormatException e) {
-                ShowAlert.Error("Error", "Invalid Amount Format. Please enter a valid number.");
+                ShowAlert.Error("Erreur", "Format de montant invalide. Veuillez entrer un nombre valide.");
             }
         } else {
-            ShowAlert.Warning("Company Not Found", "The company " + companyName + " was not found.");
+            ShowAlert.Warning("Société non trouvée", "La société " + companyName + " n'a pas été trouvée.");
         }
     }
 
@@ -152,12 +151,11 @@ public class InvestController {
     }
 
     private void updateCurrencyLabel() {
-        currencyLabel.setText("You have " + UserObj.account.currency + " as liquid");
+        currencyLabel.setText("Vous avez " + UserObj.account.currency + " en liquide.");
     }
 
     // Update bank account infos
     private void updateBankAcc(String accInfo){
         LoginController.UpdateAccInfo(accInfo);
     }
-
 }
