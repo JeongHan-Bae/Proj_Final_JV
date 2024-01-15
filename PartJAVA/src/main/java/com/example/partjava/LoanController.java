@@ -7,8 +7,8 @@ import Tools.ShowAlert;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-
 
 public class LoanController {
 
@@ -22,7 +22,7 @@ public class LoanController {
     private TextField loanAmountField;
 
     @FXML
-    private TextField passwordField;
+    private PasswordField passwordField;
 
     public Button returnButton;
 
@@ -32,8 +32,8 @@ public class LoanController {
     @FXML
     public void initialize() {
         // Initialize labels with current values from UserObj
-        currencyLabel.setText("Currency: " + UserObj.account.currency);
-        debtLabel.setText("Debt: " + UserObj.account.debt);
+        currencyLabel.setText("Devise : " + UserObj.account.currency);
+        debtLabel.setText("Dette : " + UserObj.account.debt);
     }
 
     @FXML
@@ -45,17 +45,17 @@ public class LoanController {
             amount = Double.parseDouble(amountStr);
         } catch (NumberFormatException e) {
             // Handle the case where parsing fails (e.g., non-numeric input)
-            ShowAlert.Error("Error", "Invalid Amount. Please enter a valid number.");
+            ShowAlert.Error("Erreur", "Montant invalide. Veuillez entrer un nombre valide.");
             return;
         }
         int hash_password = Password2Hash.hashPassword(passwordField.getText().trim());
 
         if (amount <= 0.0) {
-            ShowAlert.Error("Error", "Invalid Amount.");
+            ShowAlert.Error("Erreur", "Montant invalide.");
             return;
         }
         if (UserObj.account.debt - amount * (1 + rate) < loanLimit) {
-            ShowAlert.Error("Error", "Credit Limit Extended.");
+            ShowAlert.Error("Erreur", "Limite de crédit dépassée.");
         } else {
             JavaClient client = new JavaClient();
             String apply = client.sendAndReceive("applyLoan:" + UserObj.username + " " + amount + " " + rate + " " + hash_password);
@@ -65,9 +65,9 @@ public class LoanController {
                 UserObj.account.debt -= (float) (amount * (1 + rate));
                 UserObj.account.currency += (float) amount;
                 initialize();
-                ShowAlert.Information("Loan", "Loan Application Succeeded.");
+                ShowAlert.Information("Prêt", "Demande de prêt réussie.");
             } else {
-                ShowAlert.Error("Loan", "Loan Application Failed.");
+                ShowAlert.Error("Prêt", "Demande de prêt échouée.");
             }
         }
     }
@@ -76,5 +76,4 @@ public class LoanController {
     private void onReturnButtonClick() {
         SceneNavigator.getToInterface("UsersInterface.fxml", returnButton);
     }
-
 }
