@@ -7,6 +7,7 @@ import Tools.Password2Hash;
 import Tools.ShowAlert;
 import javafx.fxml.FXML;
 
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
 public class CryptoActController {
@@ -15,7 +16,7 @@ public class CryptoActController {
     private TextField clientTextField;
 
     @FXML
-    private TextField passwordField;
+    private PasswordField passwordField;
 
     @FXML
     private void sellAction() {
@@ -27,13 +28,13 @@ public class CryptoActController {
 
         // Check if the Client is the current user
         if (Client.equals(UserObj.username)) {
-            ShowAlert.Warning("Warning", "Can't transfer to self.");
+            ShowAlert.Warning("Attention", "Impossible de transférer vers soi-même.");
             return;
         }
 
         // Check if the Client exists in the buyCoins map
         if (!GlobalObj.buyCoins.containsKey(Client)) {
-            ShowAlert.Warning("Warning", "Client doesn't exist.");
+            ShowAlert.Warning("Attention", "Le client n'existe pas.");
             return;
         }
 
@@ -42,7 +43,7 @@ public class CryptoActController {
 
         // Check if UserObj.account.investment.coins is sufficient for the sale
         if (currencyAmount > UserObj.account.investment.coins * GlobalObj.coin) {
-            ShowAlert.Warning("Warning", "Not enough coins.");
+            ShowAlert.Warning("Attention", "Pas assez de coins.");
             return;
         }
 
@@ -50,10 +51,15 @@ public class CryptoActController {
         String attempt = client.sendAndReceive("sellCoins:" + UserObj.username + " " + Client + " " + hash_password);
         client.close();
 
-
         if ("Wrong password".equals(attempt) || "Client doesn't exist".equals(attempt)) {
-            ShowAlert.Error("Error", attempt);
-        } else {
+            String errorMessage = switch (attempt) {
+                case "Wrong password" -> "Mot de passe incorrect";
+                case "Client doesn't exist" -> "Le client n'existe pas";
+                default -> attempt;
+            };
+            ShowAlert.Error("Erreur", errorMessage);
+        }
+        else {
             String[] responseParts = attempt.split(" ");
             // Handle cases where there are two parts in the response (coin and currency)
             float coins = Float.parseFloat(responseParts[0]);
@@ -69,7 +75,7 @@ public class CryptoActController {
             GlobalObj.buyCoins.remove(Client);
 
             // Show success message or perform additional actions
-            ShowAlert.Information("Sale successful", currencyAmount/GlobalObj.coin + " Coins sold Successfully.");
+            ShowAlert.Information("Vente réussie", currencyAmount/GlobalObj.coin + " Coins vendus avec succès.");
         }
     }
 
@@ -83,13 +89,13 @@ public class CryptoActController {
 
         // Check if the Client is the current user
         if (Client.equals(UserObj.username)) {
-            ShowAlert.Warning("Warning", "Can't transfer to self.");
+            ShowAlert.Warning("Attention", "Impossible de transférer vers soi-même.");
             return;
         }
 
         // Check if the Client exists in the saleCoins map
         if (!GlobalObj.saleCoins.containsKey(Client)) {
-            ShowAlert.Warning("Warning", "Client doesn't exist.");
+            ShowAlert.Warning("Attention", "Le client n'existe pas.");
             return;
         }
 
@@ -98,7 +104,7 @@ public class CryptoActController {
 
         // Check if UserObj.account.currency is sufficient for the purchase
         if (coinAmount * GlobalObj.coin > UserObj.account.currency) {
-            ShowAlert.Warning("Warning", "Not enough liquid.");
+            ShowAlert.Warning("Attention", "Pas assez de liquide.");
             return;
         }
 
@@ -106,10 +112,15 @@ public class CryptoActController {
         String attempt = client.sendAndReceive("buyCoins:" + UserObj.username + " " + Client + " " + hash_password);
         client.close();
 
-
         if ("Wrong password".equals(attempt) || "Client doesn't exist".equals(attempt)) {
-            ShowAlert.Error("Error", attempt);
-        } else {
+            String errorMessage = switch (attempt) {
+                case "Wrong password" -> "Mot de passe incorrect";
+                case "Client doesn't exist" -> "Le client n'existe pas";
+                default -> attempt;
+            };
+            ShowAlert.Error("Erreur", errorMessage);
+        }
+        else {
             String[] responseParts = attempt.split(" ");
             // Handle cases where there are two parts in the response (coin and currency)
             float coins = Float.parseFloat(responseParts[0]);
@@ -125,8 +136,7 @@ public class CryptoActController {
             GlobalObj.saleCoins.remove(Client);
 
             // Show success message or perform additional actions
-            ShowAlert.Information("Purchase successful", coinAmount + " Coins Purchased Successfully.");
+            ShowAlert.Information("Achat réussi", coinAmount + " Coins achetés avec succès.");
         }
     }
 }
-
