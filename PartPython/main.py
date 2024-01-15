@@ -241,31 +241,40 @@ if __name__ == "__main__":
 
     sleep(2)
 
-    # Initialize or read global data
-    globalData: Dict[str, Any] = read_global_json(jsonFilePath)
+    try:
+        # Initialize or read global data
+        globalData: Dict[str, Any] = read_global_json(jsonFilePath)
 
-    # Use `global_data` for data processing
-    coinMap: Dict[str, float] = globalData["coinMap"]
-    currDataMap: Dict[str, float] = globalData["currDataMap"]
-    dataMap: Dict[str, Dict[str, float]] = globalData["dataMap"]
-    coin: float = globalData["coin"]
+        # Use `global_data` for data processing
+        coinMap: Dict[str, float] = globalData["coinMap"]
+        currDataMap: Dict[str, float] = globalData["currDataMap"]
+        dataMap: Dict[str, Dict[str, float]] = globalData["dataMap"]
+        coin: float = globalData["coin"]
 
-    beginDate: datetime = find_begin_date(dataMap)
-    endDate: datetime = get_end_date()
+        beginDate: datetime = find_begin_date(dataMap)
+        endDate: datetime = get_end_date()
 
-    # Update currDataMap based on participation set
-    update_curr_data(beginDate, currDataMap, participationSet)
+        # Update currDataMap based on participation set
+        update_curr_data(beginDate, currDataMap, participationSet)
 
-    # Perform the main processing
-    process_data(beginDate, endDate, coinMap, coin, dataMap, currDataMap, participationSet)
+        # Perform the main processing
+        process_data(beginDate, endDate, coinMap, coin, dataMap, currDataMap, participationSet)
 
-    # Update the local base with processed data
-    write_global_json(jsonFilePath, globalData)
+        # Update the local base with processed data
+        write_global_json(jsonFilePath, globalData)
 
-    sleep(2)
+        sleep(2)
 
-    # Send "read" to the socket, to update the server data with current local base
-    server_socket.sendall(b'read')
+        # Send "read" to the socket, to update the server data with current local base
+        server_socket.sendall(b'read')
 
-    # Close the socket connection
-    server_socket.close()
+        # Close the socket connection
+        server_socket.close()
+
+        exit_code = 0  # Success
+    except Exception as e:
+        print(f"Error: {e}")
+        exit_code = 1  # Failure
+
+    print(f"Exit Code: {exit_code}")
+    exit(exit_code)
