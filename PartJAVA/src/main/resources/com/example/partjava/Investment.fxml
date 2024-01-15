@@ -7,27 +7,27 @@
 
 
 <AnchorPane prefHeight="224.0" prefWidth="390.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.partjava.InvestmentController">
-   <children>
-      <VBox alignment="CENTER" layoutX="111.0" layoutY="33.0" prefHeight="158.0" prefWidth="167.0" style="-fx-border-radius: 20; -fx-background-radius: 20; -fx-border-color: #443B7B;">
-         <children>
-             <Button onAction="#onViewSelfButtonClick" prefWidth="80.0" style="-fx-background-color: #443B7B; -fx-background-radius: 20;" text="View Self" textFill="WHITE">
-               <VBox.margin>
-                  <Insets bottom="20.0" top="20.0" />
-               </VBox.margin>
-            </Button>
-         
-                      <Button onAction="#onViewGlobalButtonClick" prefWidth="80.0" style="-fx-background-color: #443B7B; -fx-background-radius: 20;" text="View Global" textFill="WHITE">
-               <VBox.margin>
-                  <Insets bottom="20.0" />
-               </VBox.margin>
-            </Button>
-             <Button onAction="#onInvestButtonClick" prefWidth="80.0" style="-fx-background-color: #443B7B; -fx-background-radius: 20;" text="Invest" textFill="WHITE">
-               <VBox.margin>
-                  <Insets bottom="20.0" />
-               </VBox.margin>
-            </Button>
-         </children>
-      </VBox>
-       <Button fx:id="returnButton" layoutX="20.0" layoutY="20.0" onAction="#onReturnButtonClick" style="-fx-background-color: white; -fx-background-radius: 20; -fx-border-color: #443B7B; -fx-border-radius: 20;" text="Return" textFill="#443b7b" />
-   </children>
+    <children>
+        <VBox alignment="CENTER" layoutX="111.0" layoutY="33.0" prefHeight="158.0" prefWidth="167.0" style="-fx-border-radius: 20; -fx-background-radius: 20; -fx-border-color: #443B7B;">
+            <children>
+                <Button onAction="#onViewSelfButtonClick" prefWidth="80.0" style="-fx-background-color: #443B7B; -fx-background-radius: 20;" text="View Self" textFill="WHITE">
+                    <VBox.margin>
+                        <Insets bottom="20.0" top="20.0" />
+                    </VBox.margin>
+                </Button>
+
+                <Button onAction="#onViewGlobalButtonClick" prefWidth="80.0" style="-fx-background-color: #443B7B; -fx-background-radius: 20;" text="View Global" textFill="WHITE">
+                    <VBox.margin>
+                        <Insets bottom="20.0" />
+                    </VBox.margin>
+                </Button>
+                <Button onAction="#onInvestButtonClick" prefWidth="80.0" style="-fx-background-color: #443B7B; -fx-background-radius: 20;" text="Invest" textFill="WHITE">
+                    <VBox.margin>
+                        <Insets bottom="20.0" />
+                    </VBox.margin>
+                </Button>
+            </children>
+        </VBox>
+        <Button fx:id="returnButton" layoutX="20.0" layoutY="20.0" onAction="#onReturnButtonClick" style="-fx-background-color: white; -fx-background-radius: 20; -fx-border-color: #443B7B; -fx-border-radius: 20;" text="Retour" textFill="#443b7b" />
+    </children>
 </AnchorPane>
