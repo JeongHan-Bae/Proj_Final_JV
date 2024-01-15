@@ -9,7 +9,28 @@ import javafx.scene.control.TextArea;
 public class UsersInterfaceController {
 
     @FXML
-    private TextArea infoTextArea;
+    private TextArea usernameTextArea;
+
+    @FXML
+    private TextArea fullNameTextArea;
+
+    @FXML
+    private TextArea teleTextArea;
+
+    @FXML
+    private TextArea emailTextArea;
+
+    @FXML
+    private TextArea currencyTextArea;
+
+    @FXML
+    private TextArea depositTextArea;
+
+    @FXML
+    private TextArea debtTextArea;
+
+    @FXML
+    private TextArea investmentTextArea;
 
     public Button investmentButton;
 
@@ -62,6 +83,7 @@ public class UsersInterfaceController {
 
     @FXML
     public void initialize() {
+        System.out.println(UserObj.toStringUserObj());
         // Initialize the infoTextArea with UserObj information
         updateInfoTextArea();
     }
@@ -73,14 +95,13 @@ public class UsersInterfaceController {
 
     // Method to update the infoTextArea with UserObj information
     public void updateInfoTextArea() {
-        String userObjInfo = "User: " + UserObj.username +
-                "\n" + UserObj.first_name + " " + UserObj.family_name.toUpperCase() +
-                "\nTelephone: " + UserObj.telephone +
-                "\ne-mail: " + UserObj.e_mail +
-                "\n\tCurrency: " + UserObj.account.currency +
-                "\n\tDeposit: " + UserObj.account.deposit +
-                "\n\tDebt: " + UserObj.account.debt +
-                "\n\tInvestments: " + UserObj.account.investment;
-        infoTextArea.setText(userObjInfo);
+        usernameTextArea.setText(UserObj.username);
+        fullNameTextArea.setText(UserObj.first_name + " " + UserObj.family_name);
+        emailTextArea.setText(UserObj.e_mail);
+        teleTextArea.setText(UserObj.telephone);
+        depositTextArea.setText(String.valueOf(UserObj.account.deposit));
+        debtTextArea.setText(String.valueOf(UserObj.account.debt));
+        currencyTextArea.setText(String.valueOf(UserObj.account.currency));
+        investmentTextArea.setText(UserObj.account.investment.toString().replace("Financial Products", "Actions"));
     }
 }
