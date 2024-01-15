@@ -3,10 +3,12 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
 <VBox alignment="CENTER" spacing="10.0" style="-fx-background-color: white;" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/21" fx:controller="com.example.partjava.InvestController">
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
@@ -14,26 +16,26 @@
 
     <Label fx:id="currencyLabel" />
     <Label text="Saisissez le nom d'une entreprise dans laquelle vous souhaitez investir et appuyez sur le bouton de recherche pour voir le prix d'une action :">
-      <font>
-         <Font name="Yu Gothic UI Semibold" size="12.0" />
-      </font></Label>
+        <font>
+            <Font name="Yu Gothic UI Semibold" size="12.0" />
+        </font></Label>
 
     <TextField fx:id="companyNameField" promptText="Nom de l'entreprise" style="-fx-background-radius: 20; -fx-border-color: #443B7B; -fx-border-radius: 20;" />
     <Button onAction="#onSearchButtonClick" style="-fx-background-color: #443B7B; -fx-background-radius: 20; -fx-border-radius: 20;" text="Rechercher" textFill="WHITE" />
 
     <Label text="Entrer le montant souhaité : ">
-      <font>
-         <Font name="Yu Gothic UI Semibold" size="12.0" />
-      </font></Label>
+        <font>
+            <Font name="Yu Gothic UI Semibold" size="12.0" />
+        </font></Label>
     <TextField fx:id="amountField" promptText="Montant" style="-fx-background-radius: 20; -fx-border-radius: 20; -fx-border-color: #443B7B;" />
 
     <Label text="Mot de passe :">
-      <font>
-         <Font name="Yu Gothic UI Semibold" size="12.0" />
-      </font></Label>
-    <TextField fx:id="passwordField" prefHeight="25.0" prefWidth="528.0" promptText="Password" style="-fx-background-radius: 20; -fx-border-radius: 20; -fx-border-color: #443B7B;" />
+        <font>
+            <Font name="Yu Gothic UI Semibold" size="12.0" />
+        </font></Label>
+    <PasswordField fx:id="passwordField" prefHeight="25.0" prefWidth="528.0" promptText="Password" style="-fx-background-radius: 20; -fx-border-radius: 20; -fx-border-color: #443B7B;" />
 
     <Button onAction="#onPurchaseButtonClick" style="-fx-background-color: #443B7B; -fx-background-radius: 20;" text="Acheter" textFill="WHITE" />
     <Button onAction="#onSellButtonClick" style="-fx-background-color: #443B7B; -fx-background-radius: 20;" text="Vendre" textFill="WHITE" />
-    <Button onAction="#onClearButtonClick" style="-fx-background-color: #443B7B; -fx-background-radius: 20;" text="Effacer" textFill="WHITE" />
+    <Button onAction="#onClearButtonClick" style="-fx-background-color: white; -fx-background-radius: 20; -fx-border-color: #443B7B; -fx-border-radius: 20;" text="Effacer" textFill="#443b7b" />
 </VBox>
