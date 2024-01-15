@@ -15,6 +15,9 @@ import java.util.Map;
 public class CryptoController {
 
     @FXML
+    private Button refreshButton;
+
+    @FXML
     private Label currencyLabel;
 
     @FXML
@@ -32,7 +35,7 @@ public class CryptoController {
     private void showSaleList() {
         // Show the list of each Order which sells
         StringBuilder saleList = new StringBuilder();
-        saleList.append("with registered coins:\n");
+        saleList.append("avec des coins enregistrés:\n");
         for (Map.Entry<String, Float> entry : GlobalObj.saleCoins.entrySet()) {
             saleList.append(entry.getKey()).append(": ").append(entry.getValue()).append("\n");
         }
@@ -43,7 +46,7 @@ public class CryptoController {
     private void showPurchaseList() {
         // Show the list of each Order which buys
         StringBuilder purchaseList = new StringBuilder();
-        purchaseList.append("with registered currency:\n");
+        purchaseList.append("avec de liquide enregistré:\n");
         for (Map.Entry<String, Float> entry : GlobalObj.buyCoins.entrySet()) {
             purchaseList.append(entry.getKey()).append(": ").append(entry.getValue()).append("\n");
         }
@@ -53,12 +56,12 @@ public class CryptoController {
     // Open sub windows to react with existing orders or creating an order
     @FXML
     private void action() {
-        SceneNavigator.openNewScene("CryptoAct.fxml", "Action");
+        SceneNavigator.openNewScene("CryptoAct.fxml", "Transaction");
     }
 
     @FXML
     private void order() {
-        SceneNavigator.openNewScene("CryptoOrder.fxml", "Order");
+        SceneNavigator.openNewScene("CryptoOrder.fxml", "Commande une Offre");
     }
 
     @FXML
@@ -77,8 +80,8 @@ public class CryptoController {
         String coinStr = client.sendAndReceive("getCoinVal:");
         GlobalObj.coin = Float.parseFloat(coinStr);
         client.close();
-        currencyLabel.setText("Currency: " + UserObj.account.currency);
-        coinValueLabel.setText("Coin Value: " + GlobalObj.coin);
-        coinAmountLabel.setText("Coins Owned: " + UserObj.account.investment.coins);
+        currencyLabel.setText("Liquide: " + UserObj.account.currency);
+        coinValueLabel.setText("Valeur du Coin: " + GlobalObj.coin);
+        coinAmountLabel.setText("Coins détenus: " + UserObj.account.investment.coins);
     }
 }

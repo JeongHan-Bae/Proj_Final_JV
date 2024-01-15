@@ -2,19 +2,29 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.2-ea"
-            xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.partjava.CryptoController">
-    <Button layoutX="48.0" layoutY="24.0" onAction="#showSaleList" text="Show Sale List"/>
-    <Button layoutX="265.0" layoutY="24.0" onAction="#showPurchaseList" text="Show Purchase List"/>
-    <Button layoutX="69.0" layoutY="63.0" onAction="#action" text="Action"/>
-    <Button layoutX="299.0" layoutY="63.0" onAction="#order" text="Order"/>
-    <Button fx:id="refreshButton" layoutX="498.0" layoutY="24.0" onAction="#refresh" text="Refresh"/>
-    <Button fx:id="returnButton" layoutX="200.0" layoutY="346.0" onAction="#onReturnButtonClick" text="Return"/>
-    <TextArea fx:id="outputArea" layoutX="50.0" layoutY="100.0" prefHeight="200.0" prefWidth="500.0"/>
+<AnchorPane prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.partjava.CryptoController">
+    <Button layoutX="50.0" layoutY="24.0" onAction="#showSaleList" prefWidth="117.0" style="-fx-background-color: #443B7B; -fx-background-radius: 20; -fx-border-radius: 20;" text="Liste de vente " textFill="WHITE" />
+    <Button layoutX="210.0" layoutY="24.0" onAction="#showPurchaseList" prefWidth="117.0" style="-fx-background-color: #443B7B; -fx-background-radius: 20;" text="Liste d'achat" textFill="WHITE" />
+    <Button layoutX="50.0" layoutY="63.0" onAction="#action" prefWidth="117.0" style="-fx-background-color: #443B7B; -fx-background-radius: 20;" text="Transaction" textFill="WHITE" />
+    <Button layoutX="210.0" layoutY="63.0" onAction="#order" prefWidth="117.0" style="-fx-background-color: #443B7B; -fx-background-radius: 20;" text="Offre " textFill="WHITE" />
+    <Button fx:id="refreshButton" layoutX="422.0" layoutY="24.0" onAction="#refresh" prefWidth="117.0" style="-fx-background-color: #443B7B; -fx-background-radius: 20;" text="Réinitialiser " textFill="WHITE" />
+    <Button fx:id="returnButton" layoutX="16.0" layoutY="358.0" onAction="#onReturnButtonClick" style="-fx-background-color: white; -fx-border-color: #443B7B; -fx-border-radius: 20;" text="Retour" textFill="#443b7b" />
+    <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#ffffff00" height="206.0" layoutX="43.0" layoutY="100.0" stroke="#443b7b" strokeType="INSIDE" style="-fx-stroke-width: 3;" width="514.0" />
+    <TextArea fx:id="outputArea" layoutX="49.0" layoutY="105.0" prefHeight="198.0" prefWidth="499.0" style="-fx-border-color: white; -fx-background-color: white;" />
     <!-- Labels for currency, coin value, and coin amount -->
-    <Label fx:id="currencyLabel" layoutX="50.0" layoutY="320.0" text="Currency: {UserObj.account.currency}"/>
-    <Label fx:id="coinValueLabel" layoutX="50.0" layoutY="347.0" text="Coin Value: {GlobalObj.coin}"/>
-    <Label fx:id="coinAmountLabel" layoutX="299.0" layoutY="320.0"
-           text="Coins Owned: {UserObj.account.investment.coins}"/>
+    <Label fx:id="currencyLabel" layoutX="89.0" layoutY="320.0" text="Liquide: {UserObj.account.currency}" textFill="#443b7b">
+        <font>
+            <Font name="System Bold" size="12.0" />
+        </font></Label>
+    <Label fx:id="coinValueLabel" layoutX="381.0" layoutY="320.0" text="Valeur du Coin: {GlobalObj.coin}" textFill="#443b7b">
+        <font>
+            <Font name="System Bold" size="12.0" />
+        </font></Label>
+    <Label fx:id="coinAmountLabel" layoutX="202.0" layoutY="354.0" prefHeight="26.0" prefWidth="315.0" text="Coins détenus: {UserObj.account.investment.coins}" textFill="#443b7b">
+        <font>
+            <Font name="System Bold" size="12.0" />
+        </font></Label>
 </AnchorPane>
