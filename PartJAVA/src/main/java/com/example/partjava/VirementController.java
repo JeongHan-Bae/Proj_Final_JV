@@ -8,8 +8,8 @@ import javafx.fxml.FXML;
 
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-
 
 public class VirementController {
 
@@ -23,14 +23,14 @@ public class VirementController {
     private TextField amountField;
 
     @FXML
-    private TextField passwordField;
+    private PasswordField passwordField;
 
     public Button returnButton;
 
     @FXML
     public void initialize() {
         // Initialize labels with the account's currency from UserObj
-        currencyLabel.setText("Currency: " + UserObj.account.currency);
+        currencyLabel.setText("Devise : " + UserObj.account.currency);
     }
 
     @FXML
@@ -40,24 +40,24 @@ public class VirementController {
         int hash_password = Password2Hash.hashPassword(passwordField.getText().trim());
         double amount;
         if (beneficiary.equals(UserObj.username)){
-            ShowAlert.Warning("Warning", "Can't transfer to self.");
+            ShowAlert.Warning("Attention", "Impossible de transférer vers soi-même.");
             return;
         }
 
         try {
             amount = Double.parseDouble(amountField.getText());
             if (amount <= 0.0 || amount > UserObj.account.currency) {
-                ShowAlert.Error("Error", "Invalid Amount.");
+                ShowAlert.Error("Erreur", "Montant invalide.");
                 return;
             }
         } catch (NumberFormatException e) {
-            ShowAlert.Error("Error", "Invalid Amount Format. Please enter a valid number.");
+            ShowAlert.Error("Erreur", "Format de montant invalide. Veuillez entrer un nombre valide.");
             return;
         }
 
         // Check for space in beneficiary username
         if (beneficiary.contains(" ")) {
-            ShowAlert.Error("Error", "Invalid Username for Beneficiary.");
+            ShowAlert.Error("Erreur", "Nom d'utilisateur du bénéficiaire invalide.");
             return;
         }
 
@@ -67,18 +67,18 @@ public class VirementController {
 
         switch (apply) {
             case "Wrong password":
-                ShowAlert.Error("Virement", "Wrong Password.");
+                ShowAlert.Error("Virement", "Mot de passe incorrect.");
                 break;
             case "Beneficiary doesn't exist":
-                ShowAlert.Error("Virement", "Beneficiary Doesn't Exist.");
+                ShowAlert.Error("Virement", "Le bénéficiaire n'existe pas.");
                 break;
             case "success":
                 UserObj.account.currency -= (float) amount;
                 initialize();
-                ShowAlert.Information("Virement", "Transfer Successful.");
+                ShowAlert.Information("Virement", "Transfert réussi.");
                 break;
             default:
-                ShowAlert.Error("Virement", "Transfer Failed.");
+                ShowAlert.Error("Virement", "Échec du transfert.");
                 break;
         }
     }
@@ -87,5 +87,4 @@ public class VirementController {
     private void onReturnButtonClick() {
         SceneNavigator.getToInterface("UsersInterface.fxml", returnButton);
     }
-
 }
