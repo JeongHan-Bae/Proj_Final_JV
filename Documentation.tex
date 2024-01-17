@@ -1,0 +1,785 @@
+\documentclass{article}
+
+\usepackage[english]{babel}
+\usepackage[letterpaper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage[colorlinks=false, allcolors=blue]{hyperref}
+
+\title{Java Final Project Documentation}
+\author{Zhenghan PEI, Mathurin MAUSSION, Amine LAKZIZ}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+The financial management application discussed herein presents a Java-based solution that empowers users with a versatile platform for comprehensive financial interactions. Encompassing features ranging from user authentication and account creation to investment management, cryptocurrency transactions, fund transfers, and loan applications, the system integrates seamlessly with a C++ server. Leveraging JavaFX for a dynamic graphical user interface, the application employs modular controllers, utility classes, and robust data structures. This abstract encapsulates a holistic approach towards providing users with an intuitive and efficient financial management experience.
+\end{abstract}
+
+\section*{Documentation}
+The documentation for this project has been authored by \textbf{Zhenghan PEI}.
+
+\subsection*{Navigating the Documentation}
+To enhance user experience, the documentation has been structured with a user-friendly menu system. Each section and its corresponding subtopics have been meticulously organized to facilitate quick and efficient access to specific information.
+
+\section*{Menu Structure}
+\begin{enumerate}
+    \item \hyperref[data-structures]{\Large{Data Structures}}
+    \begin{enumerate}
+        \item \hyperref[investment]{\large{Investment Class}}
+        \item \hyperref[bank-account]{\large{BankAccount Class}}
+        \item \hyperref[user-obj]{\large{UserObj Class}}
+        \item \hyperref[global-obj]{\large{GlobalObj Class}}
+        \item \hyperref[testing]{\large{Testing Classes}}
+    \end{enumerate}
+    \item \hyperref[tools]{\Large{Tools and Realizations}}
+    \begin{enumerate}
+        \item \hyperref[chart-generator]{\large{ChartGenerator Class}}
+        \item \hyperref[java-client]{\large{JavaClient Class}} \& \hyperref[admin]{\large{Admin Class}}
+        \item \hyperref[pw2hash]{\large{Password2Hash Class}}
+        \item \hyperref[show-alert]{\large{ShowAlert Class}}
+        \item \hyperref[scene-navigator]{\large{SceneNavigator Class}}
+    \end{enumerate}
+    \item \hyperref[controllers]{\Large{Controllers}}
+\end{enumerate}
+    
+\newpage
+\section{Data Structures}\label{data-structures}
+
+\subsection{Investment Class}\label{investment}
+
+The \texttt{Investment} class represents the investment profile of a bank account, encompassing the number of cryptocurrencies owned (\texttt{coins}) and a map (\texttt{investMap}) detailing the amount of stocks owned for different companies.
+
+\subsubsection{Class Fields}
+
+\begin{itemize}
+    \item \textbf{coins:} \texttt{float} - Represents the number of cryptocurrencies owned by the bank account.
+    
+    \item \textbf{investMap:} \texttt{Map<String, Float>} - A map associating the names of companies with the amount of stocks owned for each.
+\end{itemize}
+
+\subsubsection{Constructor}
+
+The class has a constructor that initializes the \texttt{investMap} and \texttt{coins} based on the provided \texttt{investInfos} string.
+
+\begin{verbatim}
+public Investment(String investInfos) {
+    investMap = new HashMap<>();
+    coins = 0.0F;
+    if (investInfos.isEmpty()) {
+        return;
+    }
+    String[] investments = investInfos.split(",");
+
+    for (String investment : investments) {
+        String[] parts = investment.trim().split(" ");
+        String key = parts[0];
+        float value = Float.parseFloat(parts[1]);
+        if (key.equals("coin")) {
+            coins = value;
+        } else {
+            investMap.put(key, value);
+        }
+    }
+}
+\end{verbatim}
+
+\subsubsection{\texttt{toString} Method}
+
+The class overrides the \texttt{toString} method to provide a formatted string representation of the investment, including the number of coins and details about the financial products.
+
+\begin{verbatim}
+@Override
+public String toString() {
+    StringBuilder res = new StringBuilder("Coins: " + coins + "\n" +
+            "Financial Products: ");
+    for (Map.Entry<String, Float> entry : investMap.entrySet()) {
+        String key = entry.getKey();
+        Float value = entry.getValue();
+
+        res.append("\n\t").append(key).append(": ").append(value);
+    }
+    return res.toString();
+}
+\end{verbatim}
+
+The \texttt{Investment} class encapsulates information about cryptocurrency and stock ownership, providing a convenient way to manage and represent investment profiles associated with bank accounts. The constructor and \texttt{toString} method offer flexibility in initializing the class and obtaining a human-readable representation of the investment details.
+
+\subsection{BankAccount Class}\label{bank-account}
+
+The \texttt{BankAccount} class represents an individual's bank account and includes information about currency, deposit, debt, and associated investments.
+
+\subsubsection{Class Fields}
+
+\begin{itemize}
+    \item \textbf{currency:} \texttt{float} - Represents the amount of currency held in the bank account.
+    
+    \item \textbf{deposit:} \texttt{float} - Represents the deposited amount in the bank account.
+    
+    \item \textbf{debt:} \texttt{float} - Represents the debt amount associated with the bank account.
+    
+    \item \textbf{investment:} \texttt{Investment} - Represents the investment profile associated with the bank account.
+\end{itemize}
+
+\subsubsection{Constructor}
+
+The class has a constructor that initializes the fields based on the provided \texttt{infos} string.
+
+\begin{verbatim}
+public BankAccount(String infos) {
+    // Constructor details
+}
+\end{verbatim}
+
+\subsubsection{\texttt{toString} Method}
+
+The class overrides the \texttt{toString} method to provide a formatted string representation of the bank account.
+
+\begin{verbatim}
+@Override
+public String toString() {
+    // toString method details
+}
+\end{verbatim}
+
+\subsection{UserObj Class}\label{user-obj}
+
+The \texttt{UserObj} class represents user information and includes static fields for a single logged-in user. It encapsulates details such as the username, first name, family name, telephone, email, current bank account information (\texttt{account}), and historical bank account information (\texttt{accountMap}).
+
+\subsubsection{Class Fields}
+
+\begin{itemize}
+    \item \textbf{username:} \texttt{String} - Represents the username of the logged-in user.
+    
+    \item \textbf{first\_name:} \texttt{String} - Represents the first name of the logged-in user.
+    
+    \item \textbf{family\_name:} \texttt{String} - Represents the family name of the logged-in user.
+    
+    \item \textbf{telephone:} \texttt{String} - Represents the telephone number of the logged-in user.
+    
+    \item \textbf{e\_mail:} \texttt{String} - Represents the email address of the logged-in user.
+    
+    \item \textbf{account:} \texttt{BankAccount} - Represents the bank account information of the logged-in user.
+    
+    \item \textbf{accountMap:} \texttt{Map<String, BankAccount>} - A map containing the bank account information of the user by date.
+\end{itemize}
+
+\subsubsection{\texttt{toStringUserObj} Method}
+
+The class includes a method, \texttt{toStringUserObj}, to provide a formatted string representation of the user object, including details such as username, first name, family name, telephone, email, current bank account information, and historical bank account information.
+
+\begin{verbatim}
+public static String toStringUserObj(){
+    StringBuilder result = new StringBuilder();
+    result.append("Username: ").append(username).append('\n');
+    result.append("First Name: ").append(first_name).append('\n');
+    result.append("Family Name: ").append(family_name).append('\n');
+    result.append("Telephone: ").append(telephone).append('\n');
+    result.append("E-mail: ").append(e_mail).append('\n');
+
+    if (account != null) {
+        result.append("Account: ").append(account).append('\n');
+    } else {
+        result.append("No account information available").append('\n');
+    }
+
+    if (!accountMap.isEmpty()) {
+        result.append("Account Map: ").append('\n');
+        for (Map.Entry<String, BankAccount> entry : accountMap.entrySet()) {
+            result.append(entry.getKey()).append(": ").append(entry.getValue()).append('\n');
+        }
+    } else {
+        result.append("No account map information available").append('\n');
+    }
+
+    return result.toString();
+}
+\end{verbatim}
+
+The \texttt{UserObj} class serves as a centralized structure for managing user information, including details about the logged-in user, their current bank account, and historical bank account information. The \texttt{toStringUserObj} method provides a user-friendly representation of the user object.
+
+\subsection{GlobalObj Class}\label{global-obj}
+
+The \texttt{GlobalObj} class is a crucial component for managing various global information related to the application. It encompasses fields and methods to handle data such as sale and purchase of cryptocurrencies, current coin values, historical coin data, company stock values, and historical company stock data.
+
+\subsubsection{Class Fields}
+
+\begin{itemize}
+    \item \textbf{saleCoins:} \texttt{Map<String, Float>} - Represents users who want to sell cryptocurrencies and the corresponding amounts they have registered to sell.
+    
+    \item \textbf{buyCoins:} \texttt{Map<String, Float>} - Represents users who want to buy cryptocurrencies and the amount of money they have registered to spend.
+    
+    \item \textbf{coin:} \texttt{float} - Represents the current value of the cryptocurrency.
+    
+    \item \textbf{coinMap:} \texttt{Map<String, Float>} - A historical map that stores the values of the cryptocurrency by date.
+    
+    \item \textbf{currDataMap:} \texttt{Map<String, Float>} - A map containing the current stock values of each company.
+    
+    \item \textbf{dataMap:} \texttt{Map<String, Map<String, Float>>} - A map containing historical stock values of each company by date.
+\end{itemize}
+
+\subsubsection{Static Initialization Block}
+
+The class includes a static initialization block that creates instances of the necessary maps, ensuring they are ready for use.
+
+\begin{verbatim}
+static {
+    saleCoins = new HashMap<>();
+    buyCoins = new HashMap<>();
+    coinMap = new HashMap<>();
+    currDataMap = new HashMap<>();
+    dataMap = a HashMap<>();
+}
+\end{verbatim}
+
+\subsubsection{Static Methods}
+
+\begin{itemize}
+    \item \textbf{\texttt{initializeClass(String globInfos)}}: Parses a string containing global information and populates the class fields accordingly. The string is expected to have specific parts separated by semicolons.
+    
+    \item \textbf{\texttt{toStringGlobalObj()}}: Generates a string representation of the entire class, including all maps and values.
+\end{itemize}
+
+\subsubsection{Helper Method}
+
+\begin{itemize}
+    \item \textbf{\texttt{appendMapToString(StringBuilder builder, Map<String, Float> map)}}: Appends the entries of a map to a StringBuilder, creating a formatted string.
+\end{itemize}
+
+The \texttt{GlobalObj} class serves as a centralized repository for managing and accessing essential global data within the application. It ensures a structured and organized approach to handling information related to cryptocurrency sales, purchases, and historical stock values.
+
+\subsection{Testing Classes}\label{testing}
+
+\subsubsection{BankAccountTest Class}
+
+The \texttt{BankAccountTest} class contains test methods to validate the initialization of the \texttt{BankAccount} class. It includes a private method to generate random float values for testing purposes.
+
+\subsubsection{GlobalObjTest Class}
+
+The \texttt{GlobalObjTest} class contains test methods to validate the initialization and string representation of the \texttt{GlobalObj} class.
+
+\subsubsection{InvestmentTest Class}
+
+The \texttt{InvestmentTest} class contains test methods to validate the initialization of the \texttt{Investment} class with and without coins. It also includes a method to compare investment maps and a private method to generate company investment information.
+
+\subsubsection{UserObjTest Class}
+
+The \texttt{UserObjTest} class contains test methods to validate the initialization of the \texttt{UserObj} class. It includes private methods to generate random usernames, names, telephone numbers, and email addresses for testing purposes.
+
+\newpage
+\section{Tools and Realizations}\label{tools}
+
+\subsection{ChartGenerator Class}\label{chart-generator}
+
+The \texttt{ChartGenerator} class, located in the \texttt{Tools} package, provides functionalities for generating and displaying various charts related to financial data. It utilizes JavaFX for creating line charts and Java's standard libraries for handling data.
+
+\subsubsection{Methods}
+
+\begin{itemize}
+    \item \texttt{chartAccountData()}: Generates a line chart representing the account data over time, including currency, deposit, debt, and their sum.
+    
+    \item \texttt{chartGlobal()}: Generates a line chart representing the historical stock values over time for various companies.
+    
+    \item \texttt{chartSelf()}: Generates a line chart representing the user's self-investments over time, considering both cryptocurrency and stock investments.
+\end{itemize}
+
+\subsubsection{Dependencies}
+
+The class relies on the following data structures and classes:
+
+\begin{itemize}
+    \item \texttt{BankAccount} class: Represents individual bank account data.
+    \item \texttt{GlobalObj} class: Manages global information related to cryptocurrency sales, purchases, and stock values.
+    \item \texttt{UserObj} class: Represents user information, including bank account details.
+\end{itemize}
+
+\subsubsection{JavaFX Components}
+
+The class uses JavaFX components to create and display line charts:
+
+\begin{itemize}
+    \item \texttt{LineChart}: Represents the main line chart.
+    \item \texttt{CategoryAxis} and \texttt{NumberAxis}: Define the axes for the line chart.
+    \item \texttt{XYChart.Series} and \texttt{XYChart.Data}: Represent series and data points on the chart.
+    \item \texttt{Alert}: Displays information, warnings, and errors in a pop-up dialog.
+    \item \texttt{VBox}: A layout component for vertical arrangement of JavaFX components.
+\end{itemize}
+
+\subsubsection{Chart Generation}
+
+The methods use historical data stored in the \texttt{UserObj.accountMap} and \texttt{GlobalObj.dataMap} to create informative line charts. The charts include details such as account currency, deposit, debt, stock values, and self-investments over time.
+
+\subsubsection{Date Parsing}
+
+The class includes a method, \texttt{parseDate}, to parse date strings into Java \texttt{Date} objects, facilitating chronological sorting of data.
+
+\subsubsection{Chart Display}
+
+The generated charts are displayed using JavaFX \texttt{Alert} dialogs, providing a user-friendly way to visualize financial data.
+
+\subsubsection{Series Management}
+
+The class efficiently manages series creation and addition to the line charts, ensuring a clear representation of different data categories.
+
+\subsubsection{Chart Limitations}
+
+While the class provides valuable insights into financial data trends, it has a limitation in displaying a maximum of 30 entries on the charts to prevent clutter and maintain readability.
+
+\subsection{JavaClient Class}\label{java-client}
+
+The \texttt{JavaClient} class, located in the \texttt{Tools} package, facilitates communication with a server through a socket connection. It is designed to send commands to the server and receive corresponding responses. The class is crucial for integrating the application with a server written in C++ that constantly listens for connections on the specified socket.
+
+\subsubsection{Socket Communication Setup}
+
+The class establishes a socket connection to the server using the address "localhost" and port 12345. It includes components for writing output to the server (\texttt{PrintWriter}) and reading responses from the server (\texttt{BufferedReader}). Additionally, a separate thread (\texttt{responseThread}) is created to continuously monitor and process server responses.
+
+\subsubsection{Threaded Response Handling}
+
+The \texttt{responseThread} reads server responses in a loop and places them in a \texttt{BlockingQueue} (\texttt{responseQueue}). This allows the main program to asynchronously retrieve responses from the server without blocking the execution flow. The thread continues to run until the socket is closed, ensuring constant monitoring for incoming responses.
+
+\subsubsection{Command Sending and Response Retrieval}
+
+The class provides methods for sending commands to the server. The \texttt{sendAndReceive} method sends a command to the server and waits for the corresponding response. This is achieved by utilizing the \texttt{BlockingQueue}, where the response thread deposits server responses. The \texttt{send} method allows sending commands without waiting for a response, providing flexibility in communication.
+
+\subsubsection{Socket Closure}
+
+The \texttt{close} method is responsible for closing the socket and associated resources. It ensures a clean termination by closing the output writer, response reader, and the socket itself. Additionally, it waits for the \texttt{responseThread} to finish before completing the closure process.
+
+\subsubsection{Exception Handling}
+
+The class includes exception handling for potential errors during socket setup, command sending, and socket closure. Exceptions such as \texttt{IOException}, \texttt{SocketException}, and \texttt{InterruptedException} are caught and printed to the standard error stream (\texttt{e.printStackTrace()}).
+
+\subsubsection{Integration with Data Classes}
+
+The \texttt{JavaClient} class plays a pivotal role in integrating the Java application with a server, allowing the exchange of commands and responses. The responses received from the server, represented as strings, are utilized to initialize or update data classes within the Java application. This enables seamless communication and synchronization between the client-side application and the server.
+
+\subsubsection{Considerations}
+
+While the class effectively handles socket communication, it assumes a predefined protocol between the client and server, where commands and responses are exchanged in a specific format. Additionally, the class does not implement advanced error recovery mechanisms and relies on exception handling to manage potential issues during communication.
+
+\subsection*{Admin Class}\label{admin}
+
+The \texttt{Admin} class, located in the \texttt{Tools} package, serves as a command-line interface for testing and debugging purposes during application development. This class enables manual interaction with the server by allowing the input of commands directly through the console.
+
+\subsubsection*{Initialization}
+
+The \texttt{main} method initializes a \texttt{JavaClient} instance, establishing a connection to the server. It then enters a loop to continuously receive user input and send corresponding commands to the server. The loop continues until the user enters the command 'exit,' at which point the application terminates.
+
+\subsubsection*{User Input Handling}
+
+The class utilizes a \texttt{Scanner} object to read user input from the console. Users can enter commands directly, providing a flexible and direct means of communication with the server.
+
+\subsubsection*{Command Execution}
+
+User input is processed within a try-catch block, catching exceptions related to connection issues. If the user enters 'exit,' the loop breaks, and the application exits. For commands 'read' and 'save,' the \texttt{send} method of \texttt{JavaClient} is used, as these commands do not require a response. For other commands, the \texttt{sendAndReceive} method is employed to send the command and await the server's response.
+
+\subsection{Password2Hash Class}\label{pw2hash}
+
+The \texttt{Password2Hash} class, located in the \texttt{Tools} package, provides a simple hashing method for passwords. The hashing algorithm involves converting each character of the password to its ASCII value plus one, multiplying these values together, and applying modular arithmetic with a predefined modulo value.
+
+\subsubsection{Hashing Algorithm}
+
+The \texttt{hashPassword} method takes a password as input and performs the following steps:
+
+1. Convert each character of the password to its ASCII value plus one.
+
+2. Multiply all the ASCII values together, applying modular arithmetic with a predefined modulo value (\texttt{Modulo}).
+
+3. Return the resulting hash as an integer.
+
+\subsubsection{Modulo Value}
+
+The modulo value is set to the hexadecimal value "BAE2001." This choice provides a level of customization and uniqueness for the hashing algorithm. It is derived from the family name and birth year of the creator Zhenghan PEI (Jeonghan BAE).
+
+\subsubsection{Example Usage}
+
+The \texttt{main} method includes an example usage of the \texttt{hashPassword} method, demonstrating the calculation of a hash for the password "John Doe." The resulting hash is then printed to the console.
+
+\subsection{ShowAlert Class}\label{show-alert}
+
+The \texttt{ShowAlert} class, situated in the \texttt{Tools} package, serves as a utility for displaying different types of JavaFX alerts (\texttt{INFORMATION}, \texttt{WARNING}, and \texttt{ERROR}). This class encapsulates the creation and display of alerts, enhancing code reusability within the JavaFX program.
+
+\subsubsection{Methods}
+
+\begin{itemize}
+    \item \texttt{showAlert(String title, String message, char type):} Private method used for creating and displaying alerts based on the specified title, message, and alert type.
+    \begin{itemize}
+        \item \texttt{title:} The title of the alert.
+        \item \texttt{message:} The content message of the alert.
+        \item \texttt{type:} A character representing the type of alert (\texttt{'I'} for \texttt{INFORMATION}, \texttt{'W'} for \texttt{WARNING}, \texttt{'E'} for \texttt{ERROR}).
+    \end{itemize}
+    
+    \item \texttt{Information(String title, String message):} Public method for displaying an \texttt{INFORMATION} alert.
+    \begin{itemize}
+        \item \texttt{title:} The title of the alert.
+        \item \texttt{message:} The content message of the alert.
+    \end{itemize}
+    
+    \item \texttt{Warning(String title, String message):} Public method for displaying a \texttt{WARNING} alert.
+    \begin{itemize}
+        \item \texttt{title:} The title of the alert.
+        \item \texttt{message:} The content message of the alert.
+    \end{itemize}
+    
+    \item \texttt{Error(String title, String message):} Public method for displaying an \texttt{ERROR} alert.
+    \begin{itemize}
+        \item \texttt{title:} The title of the alert.
+        \item \texttt{message:} The content message of the alert.
+    \end{itemize}
+\end{itemize}
+
+\subsubsection{Alert Types}
+
+The \texttt{ShowAlert} class provides three main types of alerts, each corresponding to a different JavaFX \texttt{AlertType}:
+\begin{itemize}
+    \item \texttt{INFORMATION:} Used for informative messages.
+    \item \texttt{WARNING:} Used for warning messages.
+    \item \texttt{ERROR:} Used for error messages.
+\end{itemize}
+
+The alert methods allow for the specification of the title and content message, providing flexibility in alert customization.
+
+\subsection{SceneNavigator Class}\label{scene-navigator}
+
+The \texttt{SceneNavigator} class, situated in the \texttt{com.example.partjava} package, acts as a utility for navigating between different scenes in a JavaFX application. This class provides methods for opening new scenes and navigating to specific scenes while managing the lifecycle of stages.
+
+\subsubsection{Methods}
+
+\begin{itemize}
+    \item \texttt{openNewScene(String fxmlFileName, String title):} Opens a new scene based on the provided FXML file name and title without turning off the current scene.
+    \begin{itemize}
+        \item \texttt{fxmlFileName:} The name of the FXML file representing the new scene.
+        \item \texttt{title:} The title of the new scene.
+    \end{itemize}
+    
+    \item \texttt{getToInterface(String fxmlFileName, Button sourceButton, String title):} Navigates to a specific FXML file, attaches the corresponding button, and turns off the current scene. Allows customization of the title for the new scene.
+    \begin{itemize}
+        \item \texttt{fxmlFileName:} The name of the FXML file representing the target scene.
+        \item \texttt{sourceButton:} The button associated with the current scene.
+        \item \texttt{title:} The title of the new scene.
+    \end{itemize}
+    
+    \item \texttt{getToInterface(String fxmlFileName, Button sourceButton):} Default method that navigates to a specific FXML file, attaches the corresponding button, and turns off the current scene. Uses the user's full name as the title for the new scene.
+    \begin{itemize}
+        \item \texttt{fxmlFileName:} The name of the FXML file representing the target scene.
+        \item \texttt{sourceButton:} The button associated with the current scene.
+    \end{itemize}
+\end{itemize}
+
+\subsubsection{Lifecycle Management}
+
+The class keeps track of open stages using a \texttt{List<Stage>} named \texttt{openStages}. The \texttt{closeAllStagesExcept} method is responsible for closing all open stages except the target stage, ensuring smooth navigation between scenes. It also provides a mechanism to clear the list of open stages after closing them.
+
+\subsubsection{Usage}
+
+The \texttt{SceneNavigator} class is designed to simplify the process of navigating between scenes in a JavaFX application. It integrates with FXML files, buttons, and stages to provide a seamless and organized user interface experience.
+
+
+
+\newpage
+\section{Controllers}\label{controllers}
+
+\subsection{LoginController Class}
+
+The \texttt{LoginController} class, located in the \texttt{com.example.partjava} package, serves as the controller for the initial login interface in the program. This controller handles user authentication, retrieves user and bank information, updates the application's data structures, and navigates to the main user interface upon successful login.
+
+\subsubsection{FXML Elements}
+
+\begin{itemize}
+    \item \texttt{connectButton:} Button for initiating the login process.
+    \item \texttt{newAccButton:} Button for creating a new account.
+    \item \texttt{alertLabel:} Label for displaying alerts or messages.
+    \item \texttt{usrNameField:} Text field for entering the username.
+    \item \texttt{pwField:} Password field for entering the user's password.
+\end{itemize}
+
+\subsubsection{Methods}
+
+\begin{itemize}
+    \item \texttt{connexionClick():} Method triggered by clicking the connectButton. It handles the login process, communicates with the server, and navigates to the main user interface upon successful authentication.
+    
+    \item \texttt{UpdateAccInfo(String accInfo):} Static method responsible for connecting to the server, updating the user's bank information, and populating the \texttt{UserObj.accountMap}.
+    
+    \item \texttt{createNewAcc():} Method triggered by clicking the newAccButton. It navigates to the NewAccount.fxml interface for creating a new account.
+\end{itemize}
+
+\subsubsection{Login Process}
+
+The \texttt{connexionClick()} method performs the following steps:
+
+\begin{enumerate}
+    \item Retrieves the entered username and password from the corresponding text fields.
+    \item Constructs login and bank information commands using the entered credentials.
+    \item Initiates a \texttt{JavaClient} to communicate with the server.
+    \item Sends the login command and receives user information.
+    \item Validates the received user information; displays an alert for invalid credentials.
+    \item Parses and sets user information in the \texttt{UserObj} class.
+    \item Sends a bank information command, updates account information, and closes the connection.
+    \item Retrieves global information, initializes \texttt{GlobalObj}, and prints user and global information.
+    \item Navigates to the main user interface using \texttt{SceneNavigator}.
+\end{enumerate}
+
+\subsubsection{Usage}
+
+The \texttt{LoginController} class integrates with JavaFX FXML elements, server communication (\texttt{JavaClient}), and data structures (\texttt{UserObj}, \texttt{GlobalObj}). It provides the necessary logic for user authentication and serves as the entry point to the application.
+
+\subsection{NewAccountController Class}
+
+The \texttt{NewAccountController} class, part of the \texttt{com.example.partjava} package, serves as the controller for the NewAccount.fxml interface. This controller handles the creation of a new user account, validates input fields, communicates with the server, and navigates to the login interface upon successful account creation.
+
+\subsubsection{FXML Elements}
+
+\begin{itemize}
+    \item \texttt{civilityField:} ChoiceBox for selecting the user's civility (Monsieur, Madame, - -).
+    \item \texttt{usernameField:} TextField for entering the desired username.
+    \item \texttt{firstNameField:} TextField for entering the user's first name.
+    \item \texttt{familyNameField:} TextField for entering the user's family name.
+    \item \texttt{telephoneField:} TextField for entering the user's telephone number.
+    \item \texttt{emailField:} TextField for entering the user's email address.
+    \item \texttt{passwordField:} PasswordField for entering the user's password.
+    \item \texttt{repeatPasswordField:} PasswordField for re-entering the user's password for confirmation.
+    \item \texttt{createButton:} Button for initiating the account creation process.
+    \item \texttt{clearButton:} Button for clearing all input fields.
+\end{itemize}
+
+\subsubsection{Methods}
+
+\begin{itemize}
+    \item \texttt{initialize():} Initializes the \texttt{civilityField} with predefined choices.
+    \item \texttt{onCreateButtonClicked():} Validates input fields, hashes the password, sends registration information to the server, and navigates to the login interface upon successful account creation.
+    \item \texttt{onClearButtonClicked():} Clears all input fields.
+\end{itemize}
+
+\subsubsection{Account Creation Process}
+
+The \texttt{onCreateButtonClicked()} method performs the following steps:
+
+\begin{enumerate}
+    \item Validates the entered user information and displays appropriate alerts for any errors.
+    \item Constructs a registration information string using the entered data.
+    \item Initiates a \texttt{JavaClient} to communicate with the server.
+    \item Sends the registration information to the server and receives a response.
+    \item Closes the connection with the server.
+    \item Displays an information alert for a successful account creation and navigates to the login interface.
+    \item Displays a warning alert if the username already exists.
+\end{enumerate}
+
+\subsubsection{Usage}
+
+The \texttt{NewAccountController} class integrates with JavaFX FXML elements, server communication (\texttt{JavaClient}), and password hashing (\texttt{Password2Hash}). It provides the logic for creating a new user account and ensures data integrity through input validation.
+
+\subsection{UsersInterfaceController Class}
+
+The \texttt{UsersInterfaceController} class, part of the \texttt{com.example.partjava} package, serves as the controller for the UsersInterface.fxml interface. This controller manages the main graphical user interface, displaying user information and providing navigation to various functionalities.
+
+\subsubsection{FXML Elements}
+
+\begin{itemize}
+    \item \texttt{usernameTextArea:} TextArea for displaying the user's username.
+    \item \texttt{fullNameTextArea:} TextArea for displaying the user's full name.
+    \item \texttt{teleTextArea:} TextArea for displaying the user's telephone number.
+    \item \texttt{emailTextArea:} TextArea for displaying the user's email address.
+    \item \texttt{currencyTextArea:} TextArea for displaying the user's account currency balance.
+    \item \texttt{depositTextArea:} TextArea for displaying the user's account deposit balance.
+    \item \texttt{debtTextArea:} TextArea for displaying the user's account debt balance.
+    \item \texttt{investmentTextArea:} TextArea for displaying information about the user's investments.
+    \item \texttt{investmentButton:} Button for navigating to the investment functionality.
+    \item \texttt{cryptoButton:} Button for navigating to the cryptocurrency functionality.
+    \item \texttt{virementButton:} Button for navigating to the money transfer functionality.
+    \item \texttt{loanButton:} Button for navigating to the loan functionality.
+    \item \texttt{logOutButton:} Button for logging out and navigating to the login interface.
+    \item \texttt{myAccountButton:} Button for viewing account-related charts.
+\end{itemize}
+
+\subsubsection{Methods}
+
+\begin{itemize}
+    \item \texttt{initialize():} Initializes the user interface by updating the displayed user information.
+    \item \texttt{onInvestmentButtonClick():} Navigates to the investment interface.
+    \item \texttt{onCryptoButtonClick():} Navigates to the cryptocurrency interface.
+    \item \texttt{onVirementButtonClick():} Navigates to the money transfer interface.
+    \item \texttt{onLoanButtonClick():} Navigates to the loan interface.
+    \item \texttt{onLogOutButtonClick():} Logs out the user and navigates to the login interface.
+    \item \texttt{onMyAccountButtonClick():} Generates and displays charts related to the user's account.
+    \item \texttt{updateInfoTextArea():} Updates the information displayed in the text areas based on the \texttt{UserObj} data.
+\end{itemize}
+
+\subsubsection{Usage}
+
+The \texttt{UsersInterfaceController} class manages the main graphical user interface, ensuring the accurate display of user information and providing navigation to different functionalities. It integrates with other parts of the application, such as the \texttt{ChartGenerator} for chart visualization.
+
+\subsection{InvestmentController Class}
+
+The \texttt{InvestmentController} class, part of the \texttt{com.example.partjava} package, serves as the controller for the Investment.fxml interface. This controller manages investment-related functionalities, allowing users to view charts, invest in financial products, and navigate back to the main interface.
+
+\subsubsection{FXML Elements}
+
+\begin{itemize}
+    \item \texttt{returnButton:} Button for returning to the main user interface.
+\end{itemize}
+
+\subsubsection{Methods}
+
+\begin{itemize}
+    \item \texttt{onViewGlobalButtonClick():} Displays global investment charts for the nearest 30 days.
+    \item \texttt{onViewSelfButtonClick():} Displays user-specific investment charts for the nearest 30 days.
+    \item \texttt{onInvestButtonClick():} Opens a new window to perform financial product investments.
+    \item \texttt{onReturnButtonClick():} Returns to the main user interface.
+\end{itemize}
+
+\subsubsection{Usage}
+
+The \texttt{InvestmentController} class facilitates interactions related to investments, including viewing investment charts and initiating financial product transactions. It interacts with the \texttt{ChartGenerator} class for chart visualization and utilizes the \texttt{SceneNavigator} class for seamless navigation between interfaces.
+
+\subsection*{InvestController Class}
+
+The \texttt{InvestController} class, part of the \texttt{com.example.partjava} package, serves as the controller for the Invest.fxml interface. This controller handles the buying and selling of financial products, providing functionalities to search for stock prices, make purchases, and sell stocks.
+
+\subsubsection*{FXML Elements}
+
+\begin{itemize}
+    \item \texttt{currencyLabel:} Label for displaying the user's available currency for investments.
+    \item \texttt{companyNameField:} TextField for entering the name of the company for stock-related actions.
+    \item \texttt{amountField:} TextField for entering the amount of stocks or currency for transactions.
+    \item \texttt{passwordField:} PasswordField for entering the user's password to authorize transactions.
+\end{itemize}
+
+\subsubsection*{Methods}
+
+\begin{itemize}
+    \item \texttt{initialize():} Initializes the controller, updating the currency label.
+    \item \texttt{onSearchButtonClick():} Searches for and displays the current stock price of a specified company.
+    \item \texttt{onPurchaseButtonClick():} Processes the purchase of stocks based on user input.
+    \item \texttt{onSellButtonClick():} Processes the sale of stocks based on user input.
+    \item \texttt{onClearButtonClick():} Clears all input fields.
+    \item \texttt{updateCurrencyLabel():} Updates the currency label with the user's available currency.
+    \item \texttt{updateBankAcc(String accInfo):} Updates the user's bank account information using the provided string.
+\end{itemize}
+
+\subsubsection*{Usage}
+
+The \texttt{InvestController} class is responsible for managing user interactions related to financial product transactions. It validates user inputs, performs transactions, and updates relevant information, interacting with the \texttt{JavaClient}, \texttt{UserObj}, \texttt{GlobalObj}, and \texttt{SceneNavigator} classes as needed.
+
+\subsection{CryptoController Class}
+
+The \texttt{CryptoController} class, part of the \texttt{com.example.partjava} package, serves as the controller for the \texttt{Crypto.fxml} interface. This controller handles functionalities related to cryptocurrencies, including displaying sale and purchase lists, managing transactions, and refreshing data.
+
+\subsubsection{FXML Elements}
+
+\begin{itemize}
+    \item \texttt{refreshButton:} Button to refresh cryptocurrency data.
+    \item \texttt{currencyLabel:} Label for displaying the user's available currency.
+    \item \texttt{coinValueLabel:} Label for displaying the value of a cryptocurrency coin.
+    \item \texttt{coinAmountLabel:} Label for displaying the amount of cryptocurrencies held by the user.
+    \item \texttt{outputArea:} TextArea for displaying sale and purchase lists.
+    \item \texttt{returnButton:} Button for returning to the main user interface.
+\end{itemize}
+
+\subsubsection{Methods}
+
+\begin{itemize}
+    \item \texttt{showSaleList():} Displays the list of sale orders.
+    \item \texttt{showPurchaseList():} Displays the list of purchase orders.
+    \item \texttt{action():} Opens a new window to interact with existing cryptocurrency orders.
+    \item \texttt{order():} Opens a new window to place a new cryptocurrency order.
+    \item \texttt{refresh():} Refreshes cryptocurrency data.
+    \item \texttt{onReturnButtonClick():} Returns to the main user interface.
+    \item \texttt{initialize():} Initializes the controller and retrieves cryptocurrency data.
+\end{itemize}
+
+\subsection*{CryptoActController Class}
+
+The \texttt{CryptoActController} class, part of the \texttt{com.example.partjava} package, serves as the controller for the \texttt{CryptoAct.fxml} interface. This controller manages actions related to existing cryptocurrency orders, including selling and buying actions.
+
+\subsubsection*{FXML Elements}
+
+\begin{itemize}
+    \item \texttt{clientTextField:} TextField for entering the username of the client.
+    \item \texttt{passwordField:} PasswordField for entering the user's password.
+\end{itemize}
+
+\subsubsection*{Methods}
+
+\begin{itemize}
+    \item \texttt{sellAction():} Processes the sale action based on user input.
+    \item \texttt{buyAction():} Processes the buy action based on user input.
+\end{itemize}
+
+\subsection*{CryptoOrderController Class}
+
+The \texttt{CryptoOrderController} class, part of the \texttt{com.example.partjava} package, serves as the controller for the \texttt{CryptoOrder.fxml} interface. This controller handles placing sale and purchase orders for cryptocurrencies.
+
+\subsubsection*{FXML Elements}
+
+\begin{itemize}
+    \item \texttt{amountTextField:} TextField for entering the amount of cryptocurrency for the order.
+    \item \texttt{passwordField:} PasswordField for entering the user's password.
+\end{itemize}
+
+\subsubsection*{Methods}
+
+\begin{itemize}
+    \item \texttt{sellOrder():} Places a sale order or withdraws an existing sale order based on user input.
+    \item \texttt{buyOrder():} Places a purchase order or withdraws an existing purchase order based on user input.
+\end{itemize}
+
+\subsection{VirementController Class}
+
+The \texttt{VirementController} class, part of the \texttt{com.example.partjava} package, serves as the controller for the \texttt{Virement.fxml} interface. This controller handles functionalities related to fund transfers, allowing users to specify a beneficiary, enter an amount, and complete a transfer.
+
+\subsubsection{FXML Elements}
+
+\begin{itemize}
+    \item \texttt{currencyLabel:} Label for displaying the user's available currency.
+    \item \texttt{beneficiaryField:} TextField for entering the username of the beneficiary.
+    \item \texttt{amountField:} TextField for entering the amount to be transferred.
+    \item \texttt{passwordField:} PasswordField for entering the user's password to authorize the transfer.
+    \item \texttt{returnButton:} Button for returning to the main user interface.
+\end{itemize}
+
+\subsubsection{Methods}
+
+\begin{itemize}
+    \item \texttt{initialize():} Initializes the controller, setting the currency label with the account's currency from \texttt{UserObj}.
+    \item \texttt{transfer():} Processes the fund transfer based on user input, including beneficiary, amount, and password.
+    \item \texttt{onReturnButtonClick():} Returns to the main user interface.
+\end{itemize}
+
+\subsubsection{Usage}
+
+The \texttt{VirementController} class facilitates fund transfer interactions, validating user inputs, checking for errors, and updating \texttt{UserObj.account.currency} upon successful transfers. It interacts with the \texttt{JavaClient}, \texttt{Password2Hash}, \texttt{ShowAlert}, and \texttt{SceneNavigator} classes as needed.
+
+\subsection{LoanController Class}
+
+The \texttt{LoanController} class, part of the \texttt{com.example.partjava} package, serves as the controller for the \texttt{Loan.fxml} interface. This controller manages functionalities related to loan applications, allowing users to apply for loans, specifying the loan amount and entering the required password for authorization.
+
+\subsubsection{FXML Elements}
+
+\begin{itemize}
+    \item \texttt{currencyLabel:} Label for displaying the user's available currency.
+    \item \texttt{debtLabel:} Label for displaying the user's current debt.
+    \item \texttt{loanAmountField:} TextField for entering the loan amount.
+    \item \texttt{passwordField:} PasswordField for entering the user's password to authorize the loan application.
+    \item \texttt{returnButton:} Button for returning to the main user interface.
+\end{itemize}
+
+\subsubsection{Constants}
+
+\begin{itemize}
+    \item \texttt{rate:} The interest rate for the loan application (0.0025 or 0.25\%).
+    \item \texttt{loanLimit:} The maximum allowable debt limit for a loan (-3000).
+\end{itemize}
+
+\subsubsection{Methods}
+
+\begin{itemize}
+    \item \texttt{initialize():} Initializes the controller, setting labels with the current values from \texttt{UserObj}.
+    \item \texttt{applyLoan():} Processes the loan application based on user input, including the loan amount and password.
+    \item \texttt{onReturnButtonClick():} Returns to the main user interface.
+\end{itemize}
+
+\subsubsection{Usage}
+
+The \texttt{LoanController} class facilitates loan application interactions, validating user inputs, checking for errors, and updating \texttt{UserObj.account.currency} and \texttt{UserObj.account.debt} upon successful loan applications. It interacts with the \texttt{JavaClient}, \texttt{Password2Hash}, \texttt{ShowAlert}, and \texttt{SceneNavigator} classes as needed.
+
+\end{document}
