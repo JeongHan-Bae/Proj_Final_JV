@@ -678,8 +678,8 @@ bool buyCoins(const std::string& infos, Document& DataBase, Document& Global,
     }
 
     double clientCurrency = DataBase[client.c_str()]["curr"]["currency"].GetDouble();
-    clientCurrency += currency;
-    DataBase[user.c_str()]["curr"]["currency"].SetDouble(clientCurrency);
+    clientCurrency += price;
+    DataBase[client.c_str()]["curr"]["currency"].SetDouble(clientCurrency);
 
     response = std::to_string(
             DataBase[user.c_str()]["curr"]["investment"]["coin"].GetDouble()) +

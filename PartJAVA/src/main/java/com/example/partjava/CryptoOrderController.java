@@ -61,11 +61,11 @@ public class CryptoOrderController {
         client.close();
         if ("1".equals(resInfo)) {
             if (withdraw) {
-                UserObj.account.investment.coins -= (float) amountVal;
+                UserObj.account.investment.coins += (float) amountVal;
                 GlobalObj.saleCoins.remove(UserObj.username);
                 ShowAlert.Information("Offre retirée de la vente", "L'offre mise en vente a été retirée avec succès.");
             } else {
-                UserObj.account.investment.coins += (float) amountVal;
+                UserObj.account.investment.coins -= (float) amountVal;
                 GlobalObj.saleCoins.put(UserObj.username, (float) amountVal);
                 ShowAlert.Information("Offre mise en vente", "L'offre a été mise en vente avec succès.");
             }
@@ -96,8 +96,8 @@ public class CryptoOrderController {
             }
 
             // Check if amount is greater than available currency
-            if (amountVal > UserObj.account.investment.coins) {
-                ShowAlert.Error("Pas assez d'argent courrant", "Pas assez de coins pour réaliser l'achat.");
+            if (amountVal > UserObj.account.currency) {
+                ShowAlert.Error("Pas assez d'argent courrant", "Pas assez de liquid pour réaliser l'achat.");
                 return;
             }
         }
@@ -122,12 +122,12 @@ public class CryptoOrderController {
         client.close();
         if ("1".equals(resInfo)) {
             if(withdraw){
-                UserObj.account.investment.coins += (float) amountVal;
+                UserObj.account.currency += (float) amountVal;
                 GlobalObj.buyCoins.remove(UserObj.username);
                 ShowAlert.Information("Achat retiré", "L'achat a été retirée avec succès.");
 
             } else {
-                UserObj.account.investment.coins -= (float) amountVal;
+                UserObj.account.currency -= (float) amountVal;
                 GlobalObj.buyCoins.put(UserObj.username, (float) amountVal);
                 ShowAlert.Information("Achat effectué", "L'achat a été effectué avec succès.");
             }
