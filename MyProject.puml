@@ -87,32 +87,6 @@ package Data {
     UserObj -- BankAccount : owns
 }
 
-package DataTests {
-    class BankAccountTest {
-        +testBankAccountInitialization(): void
-        -getRandomFloat(): float
-    }
-
-    class GlobalObjTest {
-        +testInitializeClass(): void
-        +testToStringGlobalObj(): void
-    }
-
-    class InvestmentTest {
-        +testInitializeInvestmentWithCoin(): void
-        +testInitializeInvestmentWithoutCoin(): void
-        +testCompareInvestMap(): void
-        -getCompanyInvestments(random: Random): String
-    }
-
-    class UserObjTest {
-        +testUserObjInitialization(): void
-        -getRandomUsername(): String
-        -getRandomName(): String
-        -getRandomTelephone(): String
-        -getRandomEmail(): String
-    }
-}
 
 xxController --> Tools.ChartGenerator : calls
 xxController --|> Tools.JavaClient : uses
