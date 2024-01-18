@@ -83,7 +83,7 @@ package Data {
         +e_mail: String
     }
     BankAccount -- Investment : has
-    BankAccount -- GlobalObj : has
+
     UserObj -- BankAccount : owns
 }
 
