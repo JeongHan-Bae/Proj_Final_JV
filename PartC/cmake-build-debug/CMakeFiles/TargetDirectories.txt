@@ -1,3 +1,0 @@
-D:/Proj_Final/PartC/cmake-build-debug/CMakeFiles/PartC.dir
-D:/Proj_Final/PartC/cmake-build-debug/CMakeFiles/edit_cache.dir
-D:/Proj_Final/PartC/cmake-build-debug/CMakeFiles/rebuild_cache.dir
